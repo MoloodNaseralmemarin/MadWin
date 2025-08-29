@@ -1,0 +1,26 @@
+﻿@page "{id}"
+@model Shop2City.Web.Pages.Admin.Orders.ShowOrderDetailModel
+@{
+    int i = 1;
+}
+<table class="responsive-table table-striped">
+    <thead>
+        <tr>
+            <th colspan="1">
+                زیر فاکتور مشتری : @Model.CustomerName
+            </th>
+            <th colspan="2">
+                عنوان سفارش
+                : @Model.ProductName
+            </th>
+        </tr>
+        <tr>
+            <th class="auto-width">#</th> <!-- اضافه کردن کلاس -->
+            <th>نام محصول</th>
+            <th>قیمت</th>
+        </tr>
+    </thead>
+    <tbody>
+   
+    </tbody>
+</table>

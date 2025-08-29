@@ -1,0 +1,152 @@
+﻿<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Bootstrap CSS -->
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.rtl.min.css" integrity="sha384-Xbg45MqvDIk1e563NLpGEulpX6AvL404DP+/iCgW9eFa2BqztiwTexswJo2jLMue" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="~/AdminPanel/Style.css" />
+    <title>پنل مدیریت فروشگاه ماد وین</title>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-md navbar-light bg-light fixed-top">
+            <div class="container-fluid">
+                <!-- دکمه همبرگر برای موبایل -->
+                <button class="btn btn-outline-dark d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar" aria-label="باز کردن منو">
+                    &#9776;
+                </button>
+                <a class="navbar-brand me-3" href="#">پنل مدیریتی ماد وین</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- سایدبار دسکتاپ -->
+    <div class="d-none d-md-block bg-light position-fixed vh-100 border-start" style="width: 280px; top: 56px; right: 0; overflow-y: auto;">
+        <div class="accordion" id="accordionDesktop">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingOneDesktop">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOneDesktop" aria-expanded="false" aria-controls="collapseOneDesktop">
+                        مدیریت کاربران
+                    </button>
+                </h2>
+                <div id="collapseOneDesktop" class="accordion-collapse collapse" aria-labelledby="headingOneDesktop" data-bs-parent="#accordionDesktop">
+                    <div class="accordion-body p-0">
+                        <ul class="list-unstyled ps-3">
+                            <li><a href="#" class="d-block py-1">کاربران</a></li>
+                            <li><a href="#" class="d-block py-1">دسترسی</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingTwoDesktop">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwoDesktop" aria-expanded="false" aria-controls="collapseTwoDesktop">
+                        مدیریت سایت
+                    </button>
+                </h2>
+                <div id="collapseTwoDesktop" class="accordion-collapse collapse" aria-labelledby="headingTwoDesktop" data-bs-parent="#accordionDesktop">
+                    <div class="accordion-body p-0">
+                        <ul class="list-unstyled ps-3">
+                            <li><a href="#" class="d-block py-1">کارمزد</a></li>
+                            <li><a href="#" class="d-block py-1">کد تخفیف</a></li>
+                            <li><a href="#" class="d-block py-1">محصولات</a></li>
+                            <li><a href="#" class="d-block py-1">دسته بندی محصولات</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingThreeDesktop">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThreeDesktop" aria-expanded="false" aria-controls="collapseThreeDesktop">
+                        مدیریت فروش ها
+                    </button>
+                </h2>
+                <div id="collapseThreeDesktop" class="accordion-collapse collapse" aria-labelledby="headingThreeDesktop" data-bs-parent="#accordionDesktop">
+                    <div class="accordion-body p-0">
+                        <ul class="list-unstyled ps-3">
+                            <li><a href="#" class="d-block py-1">سفارش های آماده</a></li>
+                            <li><a href="~/Admin/Orders/Index" class="d-block py-1">فاکتور سفارش پرده</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Offcanvas sidebar برای موبایل -->
+    <div class="offcanvas offcanvas-start d-md-none" tabindex="-1" id="offcanvasSidebar" aria-labelledby="offcanvasSidebarLabel" dir="rtl">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasSidebarLabel">منو</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="بستن"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="accordion" id="accordionMobile">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingOneMobile">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOneMobile" aria-expanded="false" aria-controls="collapseOneMobile">
+                            مدیریت کاربران
+                        </button>
+                    </h2>
+                    <div id="collapseOneMobile" class="accordion-collapse collapse" aria-labelledby="headingOneMobile" data-bs-parent="#accordionMobile">
+                        <div class="accordion-body p-0">
+                            <ul class="list-unstyled ps-3">
+                                <li><a href="#" class="d-block py-1">کاربران</a></li>
+                                <li><a href="#" class="d-block py-1">دسترسی</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingTwoMobile">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwoMobile" aria-expanded="false" aria-controls="collapseTwoMobile">
+                            مدیریت سایت
+                        </button>
+                    </h2>
+                    <div id="collapseTwoMobile" class="accordion-collapse collapse" aria-labelledby="headingTwoMobile" data-bs-parent="#accordionMobile">
+                        <div class="accordion-body p-0">
+                            <ul class="list-unstyled ps-3">
+                                <li><a href="#" class="d-block py-1">کارمزد</a></li>
+                                <li><a href="#" class="d-block py-1">کد تخفیف</a></li>
+                                <li><a href="#" class="d-block py-1">محصولات</a></li>
+                                <li><a href="#" class="d-block py-1">دسته بندی محصولات</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingThreeMobile">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThreeMobile" aria-expanded="false" aria-controls="collapseThreeMobile">
+                            مدیریت فروش ها
+                        </button>
+                    </h2>
+                    <div id="collapseThreeMobile" class="accordion-collapse collapse" aria-labelledby="headingThreeMobile" data-bs-parent="#accordionMobile">
+                        <div class="accordion-body p-0">
+                            <ul class="list-unstyled ps-3">
+                                <li><a href="#" class="d-block py-1">سفارش های آماده</a></li>
+                                <li><a href="~/Admin/Orders/Index" class="d-block py-1">فاکتور سفارش پرده</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <main>
+        <h1>میز کار</h1>
+        @RenderBody()
+    </main>
+
+    <footer class="bg-light d-flex flex-column flex-md-row justify-content-between align-items-center py-3 px-4" style="direction: rtl;">
+        <div class="mb-2 mb-md-0 fs-6 text-center text-md-start">طراحی شده توسط مولود ناصرالمعمارین</div>
+        <div class="mb-2 mb-md-0 fs-6 text-center text-md-start">آخرین بروزرسانی : <span class="badge text-bg-info">1404-05-11</span></div>
+        <div class="fs-6 text-center text-md-start">
+            <span class="badge text-bg-info">نسخه 1.0.1</span>
+        </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+</body>
+</html>

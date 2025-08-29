@@ -1,0 +1,13 @@
+﻿@using MadWin.Core.DTOs
+@model IEnumerable<SlideShowViewModel>
+
+    <div class="slideshow single-slider owl-carousel">
+        @foreach (var item in Model)
+        {
+            <div class="item">
+            <a href="@item.Link">
+                <img class="img-responsive" src="@item.FileName" alt="@item.Alt" title="@item.Title" />
+                </a>
+            </div>
+        }
+    </div>

@@ -1,0 +1,30 @@
+﻿@page "{id?}"
+@model Shop2City.WebHost.Pages.Admin.ProductGroups.CreateModel
+@{
+    ViewData["Title"] = "ثبت جدید";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card-box">
+            <h4 class="m-t-0 header-title">افزودن</h4>
+            <form method="post">
+                <input type="hidden" asp-for="createProductGroup.ParentId" />
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label class="col-form-label" asp-for="createProductGroup.Title"></label>
+                        <input class="form-control" asp-for="createProductGroup.Title" type="text">
+                        <span asp-validation-for="createProductGroup.Title" class="text-danger"></span>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" asp-for="createProductGroup.IsActive"  checked>
+                        <label class="form-check-label" asp-for="createProductGroup.IsActive">فعال / غیرفعال</label>
+                    </div>
+                </div>
+                <input type="submit" class="btn btn-success" value="ذخیره اطلاعات" />
+                <a asp-page="Create" class="btn btn-info">پاک کردن</a>
+                <a asp-page="Index" class="btn btn-primary" data-toggle="tooltip" title="مشاهده لیست محصولات درج شده">بازگشت به فهرست</a>
+            </form>
+        </div>
+    </div>
+</div>

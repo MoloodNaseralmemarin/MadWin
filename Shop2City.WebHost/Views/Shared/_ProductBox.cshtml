@@ -1,0 +1,41 @@
+﻿@using MadWin.Core.DTOs.Products
+@model ShowProductListItemViewModel
+
+<div class="card shadow-lg border-0 rounded-3">
+    <div class="image">
+        <a href="/ShowProduct/@Model.Id">
+            <img src="~/images/products/thumb/@Model.FileName" alt="@Model.Title" title="@Model.Title" class="card-img-top img-fluid rounded-3" />
+        </a>
+    </div>
+
+    <div class="card-body">
+        @* تبدیل عنوان و اضافه کردن خط جدید برای "سایز" *@
+        @{
+            string titleText = string.IsNullOrEmpty(Model.Title) ? "" : Model.Title.Replace("سایز", "<br/>سایز");
+        }
+        <a href="/ShowProduct/@Model.Id">
+            <h5 class="card-title text-truncate">@Html.Raw(titleText)</h5>
+        </a>
+        <p class="card-text">
+            @if (Model.IsStatus)
+            {
+                <span class="price text-success">@Model.Price.ToString("#,0 ریال")</span>
+            }
+            else
+            {
+                <span class="text-danger">ناموجود</span>
+            }
+        </p>
+    </div>
+
+    <div class="card-footer text-center">
+        @if (Model.IsStatus)
+        {
+            <a class="btn btn-primary rounded-pill px-4" onclick="addToCart(@Model.Id)" role="button">افزودن به سبد خرید</a>
+        }
+        else
+        {
+            <span class="btn btn-danger rounded-pill" disabled>ناموجود</span>
+        }
+    </div>
+</div>

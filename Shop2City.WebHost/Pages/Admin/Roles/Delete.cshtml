@@ -1,0 +1,18 @@
+﻿@page "{id}"
+@model Shop2City.Web.Pages.Admin.Roles.DeleteModel
+@{
+    ViewData["Title"] = "حذف نقش";
+}
+
+<div class="container alert alert-danger">
+    <form method="post">
+        <input type="hidden" asp-for="deleteRole.roleId"/>
+        <input type="hidden" asp-for="deleteRole.roleTitle"/>
+        <h2>آیا از حذف نقش "@Model.deleteRole.roleTitle" مطمئن هستید </h2>
+        <p>
+            <input type="submit" value="حذف کن" class="btn btn-outline btn-danger"/>
+            <a asp-page="Index" class="btn btn-outline btn-info">انصراف</a>
+        </p>
+    </form>
+</div>
+

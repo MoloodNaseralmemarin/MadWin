@@ -1,0 +1,86 @@
+﻿
+@using MadWin.Core.DTOs.Products
+@using MadWin.Core.Entities.Products
+@model Tuple<List<ShowProductListItemViewModel>, int>
+@{
+    var groups = ViewData["ProductGroup"] as List<ProductGroup>;
+    var selected = ViewData["selectedGroups"] as List<int>;
+}
+<div class="container">
+    <!-- Breadcrumb Start-->
+    <ul class="breadcrumb">
+        <li><a asp-controller="Home" asp-action="Index"><i class="fa fa-home"></i></a></li>
+        @*<li><a itemprop="url"><span itemprop="title">@Model</span></a></li>
+        <li><span itemprop="title">@Model.productTitleFa</span></li>*@
+    </ul>
+    <!-- Breadcrumb End-->
+    <div class="row">
+        <form id="formFilter" action="/Products" method="get">
+            <input type="hidden" id="pageId" name="pageId" value="@ViewData["pageId"].ToString()" />
+
+            <!--Left Part Start -->
+            <div id="content" class="col-sm-3">
+          
+            </div>
+            <!--Left Part End -->
+            <!--Middle Part Start-->
+            <div id="content" class="col-sm-9">
+                <div class="product-filter">
+                    <div class="row">
+                        <div class="col-md-4 col-sm-5">
+                            <div class="btn-group">
+                                <button type="button" id="list-view" class="btn btn-default" data-toggle="tooltip" title="List"><i class="fa fa-th-list"></i></button>
+                                <button type="button" id="grid-view" class="btn btn-default" data-toggle="tooltip" title="Grid"><i class="fa fa-th"></i></button>
+                            </div>
+
+                        </div>
+                        <div class="col-sm-2 text-right">
+                        </div>
+                        <div class="col-md-3 col-sm-2 text-right">
+                        </div>
+                        <div class="col-sm-1 text-right">
+                        </div>
+                        <div class="col-sm-2 text-right">
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row products-category">
+                    @foreach (var item in Model.Item1)
+                    {
+                        <partial name="_CategoryBox" model="item" />
+                    }
+
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        @if (Model.Item2 > 1)
+                        {
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination justify-content-center">
+
+                                    @*@for (int i = 1; i <= (int)Model.Item2; i++)
+                                {
+                                <li class="page-item @((i==i)?"active":"")"><a class="page-link" onclick="changePage(@i)" href="/Products?filterProductTitleFa=@ViewData["FilterProductTitleFa"]&pageId=@i">@i</a></li>
+
+                                }*@
+                                </ul>
+                            </nav>
+                        }
+                    </div>
+                </div>
+            </div>
+            <!--Middle Part End -->
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+
+        function changePage(pageid) {
+            $("#pageid").val(pageid);
+            $("#formFilter").submit();
+        }
+    </script>
+}

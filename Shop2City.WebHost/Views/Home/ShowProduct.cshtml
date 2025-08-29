@@ -1,0 +1,128 @@
+﻿@using MadWin.Core.Entities.Products
+@model Tuple<Product,List<ProductGallery>>
+@{
+    ViewData["Title"] ="محصول " +Model.Item1.Title;
+}
+    <div class="container">
+      <!-- Breadcrumb Start-->
+      <ul class="breadcrumb">
+        <li><a href="http://panahplast.ir/"><span><i class="fa fa-home"></i></span></a></li>
+        <li><a href="#"><span itemprop="title">@Model.Item1.Title</span></a></li>
+      </ul>
+      <!-- Breadcrumb End-->
+      <div class="row">
+        <!--Middle Part Start-->
+        <div id="content" class="col-sm-9">
+          <div itemscope itemtype="http://schema.org/محصولات">
+            <h1 class="title" itemprop="name">@Model.Item1.Title</h1>
+            <div class="row product-info">
+              <div class="col-sm-6">
+                        <div class="image">
+                            <img class="img-responsive" itemprop="image" id="zoom_01" src="/images/products/thumb/@Model.Item1.ProductGalleries.FirstOrDefault().FileName" title="@Model.Item1.Title" alt="@Model.Item1.Title" data-zoom-image="/images/products/thumb/@Model.Item1.ProductGalleries.FirstOrDefault().FileName" />
+                        </div>
+                <div class="center-block text-center"><span class="zoom-gallery">
+                    <i class="fa fa-search"></i> برای مشاهده گالری روی تصویر کلیک کنید</span></div>
+                <div class="image-additional" id="gallery_01"> 
+                    @foreach(var item in Model.Item2)
+                            {
+                                <a class="thumbnail" href="#" data-zoom-image="/images/products/thumb/@item.FileName" data-image="/images/products/thumb/@item.FileName" title="@item.Title">
+                                    <img src="/images/products/thumb/@item.FileName" title="@item.Title" alt="@item.Title" />
+                                </a>
+                            }
+                        </div>
+              </div>
+              <div class="col-sm-6">
+                <ul class="list-unstyled description">
+                  <li><b>کد محصول :</b> <span itemprop="mpn">@Model.Item1.Id</span></li>
+                </ul>
+                 @if (Model.Item1.IsStatus)
+                        {
+                            <ul class="price-box">
+
+                                    <span id="Pricetotal">
+                                        @Model.Item1.Price.ToString("#,0 ریال")
+                                    </span>
+                            </ul>
+                            <div id="product">
+
+                                <div class="cart">
+                                    <div>
+                                        <div class="qty">
+                                            <label class="control-label" for="input-quantity">تعداد</label>
+                                            <input type="text" name="quantity" value="1" size="2" id="input-quantity" class="form-control" />
+                                            <a class="qtyBtn plus" href="javascript:void(0);">+</a><br />
+                                            <a class="qtyBtn mines" href="javascript:void(0);">-</a>
+                                            <div class="clear"></div>
+                                        </div>
+                                        <a class="btn btn-primary" onclick="AddToCartShow(@Model.Item1.Id)" role="button">خرید</a>
+                                        @*                                     <button type="button" id="button-cart" class="btn btn-primary btn-lg" onclick="AddToCartTest(@Model.Item1.productId)">افزودن به سبد</button> *@
+                                    </div>
+                                    <div>
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="button-group">
+                                <a class="btn btn-danger">ناموجود</a>
+                            </div>
+                        }
+                    </div>
+            </div>
+            <ul class="nav nav-tabs">
+              <li class="active"><a href="#tab-description" data-toggle="tab">توضیحات</a></li>
+              <li><a href="#tab-specification" data-toggle="tab">مشخصات</a></li>
+            </ul>
+            <div class="tab-content">
+              <div itemprop="description" id="tab-description" class="tab-pane active">
+                <div>
+                    @Model.Item1.ShortDescription
+                </div>
+              </div>
+              <div id="tab-specification" class="tab-pane">
+                <div id="tab-specification" class="tab-pane">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <td colspan="2"><strong>ملزومات</strong></td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>تعداد آهن ربا </td>
+                      <td>30 عدد</td>
+                    </tr>
+                  </tbody>
+                  </table>
+              </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <!--Middle Part End -->
+        <!--Right Part Start -->
+        <aside id="column-right" class="col-sm-3 hidden-xs">
+          <h3 class="subtitle">پرفروش ها</h3>
+          <div class="side-item">
+          </div>
+      </div>
+    </div>
+  </div>
+
+@section Scripts
+{
+    <script>
+        $(".qtyBtn").click(function (count) {
+            var count = $('#input-quantity').val();
+            var price = @Model.Item1.Price;
+            var pricetotal = (count * price).toLocaleString();
+            $("#Pricetotal").html(pricetotal + " تومان ");
+        });
+    </script>
+}
+

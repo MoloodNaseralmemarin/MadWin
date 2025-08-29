@@ -1,0 +1,129 @@
+﻿@using MadWin.Application.DTOs.Cart
+@model IEnumerable<ShopCartitemDto>
+
+@{
+    ViewData["Title"] = "سبد خرید شما";
+
+    // جمع کل تعداد و مجموع فاکتور
+    var totalCount = Model.Sum(p => p.Count);
+    var totalSum = Model.Sum(p => p.Sum);
+}
+
+<div class="container my-4" id="shoppingCartContainer">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a asp-controller="Home" asp-action="Index"><i class="fa fa-home"></i></a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">سبد خرید</li>
+        </ol>
+    </nav>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center">
+            سبد خرید شما خالی می‌باشد.
+        </div>
+    }
+    else
+    {
+        <h1 class="mb-3 text-center fw-bold">سبد خرید</h1>
+
+        <!-- Desktop Table -->
+        <div class="table-responsive d-none d-md-block">
+            <table class="table table-bordered table-hover align-middle text-center" id="cartTable">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>تصویر</th>
+                        <th>نام محصول</th>
+                        <th>تعداد</th>
+                        <th class="text-end">قیمت واحد</th>
+                        <th class="text-end">مجموع</th>
+                        <th>عملیات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int row = 1;
+                    }
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@row</td>
+                            <td>
+                                <a href="/ShowProduct/@item.ProductId">
+                                    <img src="http://panahplast.ir/images/products/thumb/@item.ImageName"
+                                         alt="@item.Title"
+                                         class="img-fluid" style="max-width: 80px;" />
+                                </a>
+                            </td>
+                            <td>
+                                <a href="/ShowProduct/@item.ProductId">@item.Title</a>
+                            </td>
+                            <td>@item.Count</td>
+                            <td class="text-end">@item.Price.ToString("#,0 ریال")</td>
+                            <td class="text-end">@item.Sum.ToString("#,0 ریال")</td>
+                            <td>
+                                <button class="btn btn-sm btn-success me-1" onclick="increaseCart(@item.ProductId)"><i class="fa fa-plus"></i></button>
+                                <button class="btn btn-sm btn-info me-1" onclick="decreaseCart(@item.ProductId)">  <i class="fas fa-minus"></i></button>
+                                <button class="btn btn-sm btn-danger" onclick="removeCart(@item.ProductId)"><i class="fa fa-trash"></i></button>
+                            </td>
+                        </tr>
+                        row++;
+                    }
+                    <tr class="fw-bold bg-light">
+                        <td colspan="3" class="text-end">جمع تعداد :</td>
+                        <td>@totalCount</td>
+                        <td>جمع فاکتور :</td>
+                        <td colspan="2" class="text-center">@totalSum.ToString("#,0 ریال")</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Mobile Cards -->
+        <div class="d-block d-md-none" id="cartCards">
+            @foreach (var item in Model)
+            {
+                <div class="card mb-3 shadow-sm hover-shadow" id="cartCard_@item.ProductId">
+                    <div class="row g-0 align-items-center">
+                        <div class="col-4">
+                            <a href="/ShowProduct/@item.ProductId">
+                                <img src="http://panahplast.ir/images/products/thumb/@item.ImageName"
+                                     alt="@item.Title" class="img-fluid rounded-start">
+                            </a>
+                        </div>
+                        <div class="col-8">
+                            <div class="card-body p-2">
+                                <h5 class="card-title mb-1">@item.Title</h5>
+                                <p class="mb-1">قیمت واحد: <span class="fw-bold">@item.Price.ToString("#,0 ریال")</span></p>
+                                <p class="mb-1">مجموع: <span class="fw-bold">@item.Sum.ToString("#,0 ریال")</span></p>
+                                <div class="d-flex justify-content-start flex-wrap gap-1">
+                                    <button class="btn btn-sm btn-success me-1" onclick="increaseCart(@item.ProductId)"><i class="fa fa-plus"></i></button>
+                                    <button class="btn btn-sm btn-info me-1" onclick="decreaseCart(@item.ProductId)">  <i class="fas fa-minus"></i></button>
+                                    <button class="btn btn-sm btn-danger" onclick="removeCart(@item.ProductId)"><i class="fa fa-trash"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <!-- جمع کل برای موبایل -->
+            <div class="card mb-3 border-primary text-center fw-bold">
+                <div class="card-body">
+                    <p class="mb-1">جمع تعداد: @totalCount</p>
+                    <p>جمع فاکتور: @totalSum.ToString("#,0 ریال")</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="d-flex justify-content-between mt-3 flex-wrap gap-2" id="cartButtons">
+            <a asp-controller="Products" asp-action="BuyProduct" class="btn btn-primary btn-sm">تایید فاکتور</a>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-secondary btn-sm">بازگشت</a>
+        </div>
+    }
+</div>

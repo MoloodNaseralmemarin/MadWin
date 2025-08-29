@@ -1,0 +1,96 @@
+﻿<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+toastr.options = {
+    "closeButton": true,
+    "progressBar": true,
+    "positionClass": "toast-top-right", // محل نمایش
+    "timeOut": "3000"
+};
+
+<!--Start AddToCart-->
+<script type="text/javascript">
+        function addToCart(productId) {
+        $.ajax({
+            url: '/Cart/AddToCart', // مسیر اکشن در Controller
+            type: 'POST',
+            data: { productId : productId }, // ارسال id محصول
+            success: function (response) {
+                // آپدیت تعداد و جمع کل در صفحه
+                $("#Cart-total").text(response.totalCount);
+                $("#Price-total").text(response.totalPrice.toLocaleString());
+
+                // نمایش پیام موفقیت با Toastr
+                toastr.success('با موفقیت به سبد خرید اضافه شد.', 'پیام سیستم');
+            },
+            error: function () {
+                toastr.error('خطا در افزودن محصول به سبد خرید.', 'پیام سیستم');
+            }
+        });
+    }
+
+    function updateCartUI(response) {
+        $("#Cart-total").text(response.totalCount);
+        $("#Price-total").text(response.totalPrice.toLocaleString());
+        location.reload(); // یا بعداً با Ajax فقط ردیف رو آپدیت می‌کنیم
+    }
+
+    function increaseCart(productId) {
+        $.post('/Cart/Increase', { productId: productId }, function (response) {
+            updateCartUI(response);
+        });
+    }
+
+    function decreaseCart(productId) {
+        $.post('/Cart/Decrease', { productId: productId }, function (response) {
+            updateCartUI(response);
+        });
+    }
+
+    function removeCart(productId) {
+        $.post('/Cart/Remove', { productId: productId }, function (response) {
+            updateCartUI(response);
+        });
+    }
+
+
+
+</script>
+
+
+
+<!--Login-->
+<script type="text/javascript">
+    $(function() {
+        // فقط اعداد در فیلد شماره همراه
+        $("#userName").on("input", function() {
+            this.value = this.value.replace(/\D/g, "");
+        });
+
+        // افکت لرزش کوتاه
+        const shake = (element) => {
+            $(element).addClass("shake");
+            setTimeout(() => $(element).removeClass("shake"), 500);
+        };
+
+        // اعتبارسنجی فرم
+        window.validateData = () => {
+            if (!$("#userName").val()) {
+                toastr.error("لطفاً نام کاربری (شماره همراه) را وارد کنید");
+                shake("#userName");
+                return false;
+            }
+            if (!$("#password").val()) {
+                toastr.error("لطفاً کلمه عبور را وارد کنید");
+                shake("#password");
+                return false;
+            }
+            return true;
+        };
+    });
+</script>
+
+
+

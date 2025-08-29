@@ -1,0 +1,46 @@
+﻿@using MadWin.Core.Entities.Products
+@model IEnumerable<ProductGroup>
+<div class="container">
+    <nav id="menu" class="navbar">
+        <div class="navbar-header"> <span class="visible-xs visible-sm"> منو <b></b></span></div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+                <li><a class="home_link" title="خانه" asp-controller="Home" asp-action="Index"><span>خانه</span></a></li>
+                @foreach (var group in Model.Where(pg => pg.ParentId == null))
+                {
+                    <li class="mega-menu dropdown">
+                        <a href="#">@group.Title</a>
+                        @if (Model.Any(pg => pg.ParentId == group.ParentId))
+                        {
+                            <div class="dropdown-menu">
+                                @foreach (var category in Model.Where(pg => pg.ParentId == group.Id))
+                                {
+                                    <div class="column col-lg-3 col-md-4">
+                                        <a href="/Products?selectedGroups=@category.Id">@category.Title</a>
+                                        @if (Model.Any(pg => pg.ParentId == category.ParentId))
+                                        {
+                                            <div>
+
+                                                <ul>
+                                                    @foreach (var subcategory in Model.Where(pg => pg.ParentId == category.Id))
+                                                    {
+                                                        <li>
+                                                            <a href="/Products?selectedGroups=@subcategory.Id">@subcategory.Title</a>
+
+                                                        </li>
+                                                    }
+
+                                                </ul>
+                                            </div>
+
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </li>
+                }
+            </ul>
+        </div>
+    </nav>
+</div>

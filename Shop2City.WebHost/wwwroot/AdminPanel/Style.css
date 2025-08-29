@@ -1,0 +1,71 @@
+﻿
+@font-face {
+    font-family: 'WYekan';
+    src: url('../../css/persian-fonts/WYekan.eot?#') format('eot'), url('../../css/persian-fonts/WYekan.ttf') format('truetype');
+}
+
+* {
+    font-family: 'WYekan';
+}
+.sidebar
+{
+    position: fixed;
+    top: 56px; /* ارتفاع navbar */
+    left: 0; /* به جای right: 0 */
+    width: 250px;
+    height: calc(100vh - 56px);
+    background-color: red;
+    color: white;
+    padding: 1rem;
+    overflow-y: auto;
+    transition: transform 0.3s ease;
+    z-index: 1040;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+    .sidebar ul li > a {
+        color: white;
+        text-decoration: none;
+        display: block;
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+    }
+
+        .sidebar ul li > a:hover {
+            background-color: #495057;
+        }
+
+.submenu a {
+    padding-left: 2rem !important; /* تغییر به چپ */
+    font-size: 0.9rem;
+}
+
+main{
+    margin-right: 280px;
+}
+
+
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1030;
+    background-color: #f8f9fa;
+    height: 60px; /* فرضا */
+    line-height: 60px; /* برای وسط چین کردن عمودی */
+
+}
+
+@media (max-width: 768px) {
+    main {
+        margin-right: 0;
+    }
+    card {
+        margin: 30px;
+    }
+}

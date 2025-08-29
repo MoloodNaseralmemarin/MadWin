@@ -1,0 +1,243 @@
+﻿@using MadWin.Application.Services
+@using Shop2City.WebHost.ViewModels.Orders
+@model OrderSummaryViewModel
+
+@inject INumberRoundingService numberRoundingService;
+@{
+    var orderId = Model.OrderSummary.OrderId;
+}
+
+<div class="container">
+    <!-- مسیر صفحه (Breadcrumb) -->
+    <ul class="breadcrumb">
+        <li><a asp-controller="Home" asp-action="Index"><i class="fa fa-home"></i> خانه</a></li>
+        <li><span>سبد خرید شما</span></li>
+    </ul>
+
+    <div class="row">
+        <!-- نوار کناری -->
+        <partial name="_SideBar" />
+
+        <!-- محتوای اصلی -->
+        <div class="col-sm-9" id="content">
+            <h1 class="title">سبد خرید</h1>
+            <h2>اطلاعات سفارش شما تا این لحظه</h2>
+
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>نام محصول</th>
+                        <th>ابعاد (ارتفاع × عرض)</th>
+                        <th>تعداد قطعات</th>
+                        <th>وضعیت قطعات</th>
+                        <th>قیمت واحد</th>
+                        <th>تعداد انتخاب‌شده</th>
+                        <th>قیمت کل</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>@Model.OrderSummary.CategoryGroup</td>
+                        <td>@Model.OrderSummary.Size</td>
+                        <td>@Model.OrderSummary.PartCount</td>
+                        <td>@(Model.OrderSummary.IsEqualParts ? "قطعات مساوی هستند" : "قطعات اندازه‌های مختلف دارند")</td>
+                        <td>@Model.OrderSummary.PriceWithFee.ToString("N0") ریال</td>
+                        <td>@Model.OrderSummary.Count</td>
+                        <td>@Model.OrderSummary.SubtotalPrice.ToString("N0") ریال</td>
+                    </tr>
+
+                    @for (int i = 0; i < Model.OrderSummary.WidthParts.Count; i++)
+                    {
+                        string position;
+                        if (Model.OrderSummary.WidthParts.Count == 3)
+                        {
+                            position = i == 0 ? "چپ" : i == 1 ? "وسط" : "راست";
+                        }
+                        else
+                        {
+                            position = (i % 2 == 0) ? "راست" : "چپ";
+                        }
+
+                        <tr>
+                            <td colspan="2">محل نصب: @position</td>
+                            <td colspan="5">عرض: @Model.OrderSummary.WidthParts[i].WidthValue</td>
+                            
+                        </tr>
+                    }
+
+                    <tr>
+                        <td colspan="2"><strong>روش ارسال:</strong></td>
+                        <td colspan="5">
+                            <div class="radio-groups">
+                                <!-- این بخش برای انتخاب نوع ارسال است -->
+                                @foreach (var item in Model.DeliveryMethods)
+                                {
+                                    <input type="radio" name="selection" value="@item.DeliveryId" id="@item.DeliveryId" />
+                                    <label for="@item.DeliveryId">@item.Name</label>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><strong>کد تخفیف:</strong></td>
+                        <td colspan="5" class="mt-2">
+                            <input type="hidden" id="orderId" value="@Model.OrderSummary.OrderId" />
+                            <input type="text" id="discountCode" class="form-control" />
+                            <button id="applyDiscountBtn" class="btn btn-primary btn-block mt-1">اعمال</button>
+                            <span id="discountMessage" class="text-danger mt-1 d-block"></span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- جدول نهایی مبلغ -->
+            <div class="row">
+                <div class="col-sm-8 col-sm-offset-2">
+                    <table class="table table-bordered">
+                        <tr>
+                            <td><strong>جمع کل قبل از تخفیف :</strong></td>
+                            <td id="SubtotalPrice">@Model.OrderSummary.SubtotalPrice.ToString("N0") ریال</td>
+                        </tr>
+                        <tr>
+                            <td><strong>مبلغ تخفیف :</strong></td>
+                            <td><span id="disTotal">0</span> ریال </td>
+                        </tr>
+                        <tr>
+                            <td><strong>هزینه ارسال و بسته‌بندی :</strong></td>
+                            <td><span id="deliveryPrice">0</span> ریال </td>
+                        </tr>
+
+                        <tr class="h4 center text-primary">
+                            <td colspan="2"><strong>مبلغ قابل پرداخت :</strong><span id="sumOrder">0</span> ریال </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <button class="btn btn-success btn-block" id="postButton" disabled>پرداخت آنلاین</button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts
+{
+
+<script>
+    function updateTotal() {
+        let subtotalText = $("#SubtotalPrice").text();
+        let subtotal = Number(subtotalText.replace(/[^\d]/g, ''));
+
+        let deliveryText = $("#deliveryPrice").text();
+        let delivery = Number(deliveryText.replace(/,/g, ''));
+
+        let disTotalText = $("#disTotal").text();
+            let disTotal= Number(disTotalText.replace(/,/g, ''));
+
+        let total = subtotal - disTotal + delivery;
+
+            $("#sumOrder").text(total.toLocaleString());
+    }
+        let selectedDeliveryId = null; // متغیر سراسری
+    $(document).ready(function () {
+        // بارگذاری اولیه
+        updateTotal();
+
+        // مثال: وقتی delivery تغییر می‌کنه (مثلا بعد از ایجکس)، دوباره محاسبه کن
+        $("input:radio[name=selection]").on("change", function () {
+               selectedDeliveryId = $(this).val();
+
+                       // دکمه پرداخت را فعال کن
+        $("#postButton").prop("disabled", false);
+
+            $.ajax({
+                type: "GET",
+                url: "/Home/GetDeliveryPrice",
+                    data: { deliveryId: selectedDeliveryId },
+                success: function (result) {
+                    if (result.success) {
+                        let deliveryPrice = result.price;
+                        $("#deliveryPrice").text(deliveryPrice.toLocaleString());
+
+                        updateTotal(); // بعد از تغییر قیمت پست، جمع مجدد
+                    }
+                }
+            });
+        });
+
+        $("#applyDiscountBtn").click(function (e) {
+            e.preventDefault();
+
+            var orderId = $("#orderId").val();
+            var discountCode = $("#discountCode").val();
+
+               $.ajax({
+        url: '@Url.Action("UseDiscount", "Orders", new { area = "UserPanel" })',
+        type: 'GET',
+        data: {
+            orderId: orderId,
+            discountCode: discountCode
+        },
+        success: function (response) {
+            if (response.success) {
+                $("#disTotal").text(response.discountAmount.toLocaleString());
+                         updateTotal(); // بعد از تغییر قیمت پست، تخفیف
+                // نمایش پیام موفقیت با تنظیمات سفارشی
+                toastr.success(response.message, "", {
+                    closeButton: true,
+                    progressBar: true,
+                    positionClass: "toast-top-right", // جای دلخواه
+                    timeOut: 5000                     // مدت‌زمان کوتاه
+                });
+
+            } else {
+                // نمایش پیام خطا با تنظیمات سفارشی
+                toastr.error(response.message, "", {
+                    closeButton: true,
+                    progressBar: true,
+                    positionClass: "toast-top-right",
+                    timeOut: 8000
+                });
+            }
+        },
+        error: function () {
+            $("#discountMessage").text("خطا در ارتباط با سرور").removeClass("text-success").addClass("text-danger");
+        }
+    });
+        });
+    });
+            $('#postButton').click(function () {
+            var sumOrderText = $("#sumOrder").text();
+            var sumOrder = Number(sumOrderText.replace(/,/g, ''));
+
+            const dataToSend = {
+                sumOrder: sumOrder,
+                invoiceId: @orderId,   // متغیر جاوااسکریپتی که از Razor مقدار گرفته
+                    deliveryId:selectedDeliveryId,
+                source: 'order'
+            };
+
+            console.log(dataToSend);
+
+            $.ajax({
+                url: '/Payment/ProcessPayment',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(dataToSend),
+                success: function (response) {
+                    if (response.success) {
+                        window.location.href = response.redirectUrl;
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error(error);
+                    alert("An error occurred while sending the request.");
+                }
+            });
+        });
+
+</script>
+}

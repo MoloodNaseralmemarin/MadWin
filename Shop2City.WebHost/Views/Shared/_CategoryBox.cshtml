@@ -1,0 +1,30 @@
+﻿@using MadWin.Core.DTOs.Products
+@model ShowProductListItemViewModel
+<div class="product-layout product-list col-xs-12">
+    <div class="product-thumb">
+        <div class="image">
+            <a href="/ShowProduct/@Model.Id"><img src="~/images/products/thumb/@Model.FileName" alt="@Model.Title" title="@Model.Title" class="img-responsive" /></a>
+        </div>
+        <div class="caption">
+            @{
+                string titleText = string.IsNullOrEmpty(Model.Title) ? "" : Model.Title.Replace("سایز", "<br/>" + "سایز");
+            }
+            <a href="/ShowProduct/@Model.Id"><h4 id="title">@Html.Raw(titleText)</h4></a>
+        </div>
+        @if (Model.IsStatus)
+        {
+            <div class="button-group">
+
+                <p class="Price"> <span class="Price-new">@Model.Price.ToString("#,0 ریال")</span></p>
+                <a class="btn btn-primary" onclick="AddToCartMain(@Model.Id)" role="button">خرید</a>
+            </div>
+        }
+        else
+        {
+            <div class="button-group">
+                <a class="btn btn-danger">ناموجود</a>
+            </div>
+        }
+
+    </div>
+</div>

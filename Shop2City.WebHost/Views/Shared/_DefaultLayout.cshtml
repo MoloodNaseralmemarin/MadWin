@@ -1,0 +1,45 @@
+﻿<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="images/favicon.png" rel="icon" />
+    <title>فروشگاه اینترنتی ماد وین</title>
+    <meta name="description" content="فروش">
+    <meta name="enamad" content="49461584"/>
+    <!-- CSS Part Start-->
+    <partial name="_CSS"/>
+    <!-- CSS Part End-->
+</head>
+<body>
+    <!-- هدر -->
+    <header class="bg-primary text-white py-3">
+        <partial name="_Nav" />
+    </header>
+    <!-- شماره‌های تماس -->
+    <section class="contact-info bg-light py-5">
+        <div class="container text-center">
+            <p class="contact-text">برای مشاوره و خرید با شماره‌های زیر تماس بگیرید:</p>
+            <button class="btn btn-primary" id="toggleButton">نمایش شماره‌ها</button>
+            <div id="contactNumbers" class="contact-numbers mt-3" style="display: none;">
+                <a href="tel:+982100000000" class="btn btn-outline-primary contact-btn m-2">۰۲۱-۰۰۰۰۰۰۰۰</a>
+                <a href="tel:+989120000000" class="btn btn-outline-primary contact-btn m-2">۰۹۱۲-۰۰۰۰۰۰۰۰</a>
+            </div>
+        </div>
+    </section>
+
+
+
+
+    @RenderBody()
+
+<!--Footer Start-->
+<partial name="_Footer"/>
+<!--Footer End-->
+    <!-- JS Part Start-->
+        <partial name="_JS"/>
+    @await RenderSectionAsync("Styles", required: false)
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

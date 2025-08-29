@@ -1,0 +1,118 @@
+﻿@using MadWin.Application.ViewModels.Account
+@model RegisterViewModel
+@{
+    ViewData["Title"] = "ثبت نام";
+}
+<div class="container">
+    <ul class="breadcrumb">
+        <li><a asp-controller="Home" asp-action="Index"><i class="fa fa-home"></i></a></li>
+        <li aria-current="page">حساب کاربری</li>
+        <li class="active" aria-current="page">ثبت نام</li>
+    </ul>
+ 
+    <div class="row">
+        <div class="col-sm-3">
+        </div>
+        <div class="col-sm-8">
+
+        @if (ViewBag.IsSuccess != null)
+        {
+            <div class="alert alert-success text-center ">
+                <p class="help-block">با تشکر از ثبت نام شما در فروشگاه ماد وین</p>
+                <img src="~/images/progress.gif" />
+            </div>
+
+            <script>
+                // Your delay in milliseconds
+                var delay = 3000;
+                setTimeout(function () { window.location = "/Login"; }, delay);
+            </script>
+        }
+        <div>
+
+            <form class="form-horizontal" asp-action="Register" method="post">
+                <fieldset id="account">
+                    <legend>اطلاعات شخصی شما</legend>
+                    <div class="form-group required">
+                        <label asp-for="FirstName" class="col-sm-2 control-label"></label>
+                        <div class="col-sm-10">
+                            <i class="glyphicon glyphicon-user"></i>
+                            <input type="text" asp-for="FirstName" class="form-control" id="firstName">
+                        </div>
+                    </div>
+                    <div class="form-group required">
+                        <span asp-validation-for="FirstName"></span>
+                        <label asp-for="LastName" class="col-sm-2 control-label"></label>
+                        <div class="col-sm-10">
+                            <i class="glyphicon glyphicon-user"></i>
+                            <input asp-for="LastName" type="text" class="form-control" id="lastName">
+                        </div>
+                    </div>
+                    <div class="form-group required">
+                        <span asp-validation-for="LastName"></span>
+                        <label asp-for="CellPhone" class="col-sm-2 control-label"></label>
+                        <div class="col-sm-10">
+                            <i class="glyphicon glyphicon-phone"></i>
+                                <input type="text" asp-for="CellPhone" class="form-control" id="PhoneNumber" pattern="[0-9]*" inputmode="numeric">
+                        </div>
+                    </div>
+                    <div class="form-group required">
+                        <span asp-validation-for="CellPhone"></span>
+                        <label asp-for="Address" class="col-sm-2 control-label"></label>
+                        <div class="col-sm-10">
+                            <i class="glyphicon glyphicon-home"></i>
+                            <input type="text" asp-for="Address" class="form-control" id="address">
+                            <span asp-validation-for="Address"></span>
+
+                        </div>
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <legend>رمز عبور شما</legend>
+                    <div class="form-group required">
+                        <label asp-for="Password" class="col-sm-2 control-label"></label>
+                        <div class="col-sm-10">
+                            <i class="glyphicon glyphicon-lock"></i>
+                            <input type="password" asp-for="Password" class="form-control" id="Password">
+                        </div>
+                    </div>
+                    <div class="form-group required">
+                        <span asp-validation-for="Password"></span>
+                        <label asp-for="ConfirmPassword" class="col-sm-2 control-label"></label>
+                        <div class="col-sm-10">
+                            <i class="glyphicon glyphicon-lock"></i>
+                            <input type="password" asp-for="ConfirmPassword" class="form-control" id="confirmPassword">
+                            <span asp-validation-for="ConfirmPassword"></span>
+                        </div>
+                    </div>
+                </fieldset>
+                <div class="buttons">
+                    <div class="pull-right">
+                        <input class="btn btn-success" type="submit" value="ثبت نام" />
+                    </div>
+                </div>
+            </form>
+            <!--form End-->
+        </div>
+        <!--Middle Part End -->
+    </div>
+</div>
+    <div class="col-sm-2">
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+
+        $(document).ready(function() {
+
+            $("#CellPhone").on("input",
+                function() {
+                    var self = $(this);
+                    self.val(self.val().replace(/\D/g, ""));
+                });
+        });
+
+    </script>
+}

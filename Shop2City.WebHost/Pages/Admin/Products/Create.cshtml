@@ -1,0 +1,113 @@
+﻿@page "{handler?}"
+@model Shop2City.WebHost.Pages.Admin.Products.CreateModel
+
+@{
+    ViewData["Title"] = "ثبت کالای جدید";
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card-box">
+            <form method="post" enctype="multipart/form-data">
+
+                <h1>ثبت کالای جدید</h1>
+                <hr />
+                <h4>شرح کالا</h4>
+                <div class="form-group">
+                    <label class="col-form-label" asp-for="createProduct.Title"></label>
+                    <input class="form-control" asp-for="createProduct.Title" type="text">
+                    <span asp-validation-for="createProduct.Title" class="text-danger"></span>
+                </div>
+                <div class="row">
+
+                    <div class="form-group col-md-4">
+                        <label class="col-form-label" asp-for="createProduct.ProductGroupId"></label>
+                        <select class="form-control" asp-for="createProduct.ProductGroupId" asp-items="@(ViewData["ProductGroup"] as SelectList)"></select>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label class="col-form-label" asp-for="createProduct.CategoryId"></label>
+                        <select class="form-control" asp-for="createProduct.CategoryId" asp-items="@(ViewData["Categories"] as SelectList)"></select>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label class="col-form-label" asp-for="createProduct.SubCategoryId"></label>
+                        <select class="form-control" asp-for="createProduct.SubCategoryId" asp-items="@(ViewData["SubCategory"] as SelectList)"></select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label class="col-form-label" asp-for="createProduct.IsStatus"></label>
+                        <select class="form-control" name="isStatus">
+                            <option value="true"> موجود </option>
+                            <option value="false"> ناموجود </option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label class="col-form-label" asp-for="createProduct.Price"></label>
+                        <input class="form-control" asp-for="createProduct.Price" type="text">
+                        <span asp-validation-for="createProduct.Price" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col">
+                        <label class="col-form-label" asp-for="createProduct.Tags"></label>
+                        <input type="text" class="form-control" asp-for="createProduct.Tags" />
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col">
+                        <label class="col-form-label" asp-for="createProduct.ShortDescription"></label>
+                        <input type="text" class="form-control" asp-for="createProduct.ShortDescription" />
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col">
+                        <label class="col-form-label" asp-for="createProduct.FullDescription"></label>
+                        <span class="black">توضیحات بیشتر از 300 کلمه و منحصر به فرد، شانس نمایش کالای شما در گوگل رابیشتر می کند.توضیحات کپی شده وتکراری شانس نمایش کالا را کمتر می کند. </span>
+                        <textarea type="text" class="form-control ckeditor" asp-for="createProduct.FullDescription" rows="10"></textarea>
+                    </div>
+
+                </div>
+                <input type="submit" class="btn btn-success" value="ذخیره اطلاعات" />
+                <a asp-page="Create" class="btn btn-info">پاک کردن</a>
+                <a asp-page="Index" class="btn btn-primary" data-toggle="tooltip" title="مشاهده لیست محصولات درج شده">بازگشت به فهرست</a>
+            </form>
+        </div>
+    </div>
+</div>
+@section Scripts
+{
+    <script>
+        $("#createProduct_productGroupId").change(function () {
+            $("#createProduct_productCategory").empty();
+            $.getJSON("/home/GetCategory/" + $("#createProduct_productGroupId :selected").val(),
+                function (data) {
+
+                    $.each(data,
+                        function () {
+                            $("#createProduct_productCategory").append('<option value=' + this.value + '>' + this.text + '</option>');
+
+                        });
+
+                });
+
+
+        });
+
+        $("#createProduct_productCategory").change(function () {
+            $("#createProduct_productSubCategory").empty();
+            $.getJSON("/home/GetSubCategory/" + $("#createProduct_productCategory :selected").val(),
+                function (data) {
+
+                    $.each(data,
+                        function () {
+                            $("#createProduct_productSubCategory").append('<option value=' + this.value + '>' + this.text + '</option>');
+
+                        });
+
+                });
+
+
+        });
+    </script>
+}

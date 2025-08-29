@@ -1,0 +1,68 @@
+﻿@using Shop2City.WebHost.ViewModels.Account
+@inject IConfiguration Configuration
+
+@model LoginViewModel
+@{
+    ViewData["Title"] = "ورود به سایت";
+    var returnUrl = @Context.Request.Query["returnurl"];
+}
+
+<div class="container my-4">
+    <!-- Breadcrumb Start -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a asp-controller="Home" asp-action="Index"><i class="fa fa-home"></i></a>
+            </li>
+            <li class="breadcrumb-item">حساب کاربری</li>
+            <li class="breadcrumb-item active" aria-current="page">ورود</li>
+        </ol>
+    </nav>
+    <!-- Breadcrumb End -->
+
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8 col-sm-10">
+            <form asp-action="Login" asp-route-returnurl="@returnUrl" method="post" class="card p-4 shadow-sm">
+                <input type="hidden" name="captcha" id="captchaInput" />
+
+                <h4 class="mb-4 text-center">ورود به حساب کاربری</h4>
+
+                <div class="mb-3">
+                    <label asp-for="userName" class="form-label">نام کاربری</label>
+                    <input type="text"
+                           asp-for="userName"
+                           class="form-control form-control-md d-md-block"
+                           id="userName"
+                           pattern="[0-9]*"
+                           inputmode="numeric"
+                           placeholder="شماره همراه یا نام کاربری">
+                    <div asp-validation-summary="All" class="text-danger mt-1"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="password" class="form-label">کلمه عبور</label>
+                    <input type="password"
+                           asp-for="password"
+                           class="form-control form-control-md d-md-block"
+                           id="password"
+                           placeholder="کلمه عبور خود را وارد کنید">
+                </div>
+
+                <div class="form-check mb-3">
+                    <input class="form-check-input" asp-for="rememberMe" type="checkbox" id="rememberMe">
+                    <label class="form-check-label" for="rememberMe">
+                        مرا بخاطر بسپار
+                    </label>
+                </div>
+
+                <div class="mb-3">
+                    <a asp-controller="Account" asp-action="ForgotPassword">کلمه عبور را فراموش کردم</a>
+                </div>
+
+                <button type="submit" class="btn btn-success btn-md btn-lg w-100 d-md-block" onclick="return validateData();">
+                    ورود
+                </button>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,154 @@
+﻿@page "{id}"
+@model Shop2City.WebHost.Pages.Admin.Products.EditModel
+@{
+    ViewData["Title"] = "ویرایش";
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card-box">
+            <form method="post" enctype="multipart/form-data">
+                <input type="hidden" asp-for="editProduct.Id" />
+                <input type="hidden" asp-for="editProduct.UserId" />
+                <input type="hidden" asp-for="editProduct.ProductGroupId" />
+                <input type="hidden" asp-for="editProduct.CategoryId" />
+                <input type="hidden" asp-for="editProduct.SubCategoryId" />
+                <input type="hidden" asp-for="editProduct.CreateDate" />
+                <input type="hidden" asp-for="editProduct.LastUpdateDate" />
+                <h2>اطلاعات موارد مصرفی</h2>
+                <div class="form-group">
+                    <label class="col-form-label" asp-for="editProduct.Title"></label>
+                    <input class="form-control" asp-for="editProduct.Title" type="text">
+                    <span asp-validation-for="editProduct.Title" class="text-danger"></span>
+                </div>
+                <div class="row">
+
+                    <div class="form-group col-md-4">
+                        <label class="col-form-label" asp-for="editProduct.ProductGroupId"></label>
+                        <select class="form-control" asp-for="editProduct.ProductGroupId" asp-items="@(ViewData["ProductGroup"] as SelectList)"></select>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label class="col-form-label" asp-for="editProduct.CategoryId"></label>
+                        <select class="form-control" asp-for="editProduct.CategoryId" asp-items="@(ViewData["Categories"] as SelectList)"></select>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label class="col-form-label" asp-for="editProduct.SubCategory"></label>
+                        <select class="form-control" asp-for="editProduct.SubCategory" asp-items="@(ViewData["SubCategory"] as SelectList)"></select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label class="col-form-label" asp-for="editProduct.IsStatus"></label>
+                        <select class="form-control" name="isStatus">
+                            <option value="true"> موجود </option>
+                            <option value="false"> ناموجود </option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label class="col-form-label" asp-for="editProduct.Price"></label>
+                        <input class="form-control" asp-for="editProduct.Price" type="text">
+                        <span asp-validation-for="editProduct.Price" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col">
+                        <label class="col-form-label" asp-for="editProduct.Tags"></label>
+                        <input type="text" class="form-control" asp-for="editProduct.Tags" />
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col">
+                        <label class="col-form-label" asp-for="editProduct.ShortDescription"></label>
+                        <input type="text" class="form-control" asp-for="editProduct.ShortDescription" />
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col">
+                        <label class="col-form-label" asp-for="editProduct.FullDescription"></label>
+                        <span class="black">توضیحات بیشتر از 300 کلمه و منحصر به فرد، شانس نمایش کالای شما در گوگل رابیشتر می کند.توضیحات کپی شده وتکراری شانس نمایش کالا را کمتر می کند. </span>
+                        <textarea type="text" class="form-control ckeditor" asp-for="editProduct.FullDescription" rows="10"></textarea>
+                    </div>
+
+                </div>
+                <input type="submit" class="btn btn-success" value="ذخیره اطلاعات" />
+                <a asp-page="Create" class="btn btn-info">پاک کردن</a>
+                <a asp-page="Index" class="btn btn-primary" data-toggle="tooltip" title="مشاهده لیست محصولات درج شده">بازگشت به فهرست</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        $(document).ready(function() {
+            $('#editProduct_productSubCategory').val(null);
+            $.getJSON("/home/GetSubCategory/" + $("#editProduct_productCategory :selected").val(),
+                function(data) {
+
+                    $.each(data,
+                        function() {
+                            $("#editProduct_productSubCategory").append('<option value=' + this.value + '>' + this.text + '</option>');
+
+                        });
+                });
+        });
+
+        $("#editProduct_productGroupId").change(function() {
+            $("#editProduct_productCategory").empty();
+            $("#editProduct_productSubCategory").empty();
+            $.getJSON("/Home/GetCategory/" + $("#editProduct_productGroupId :selected").val(),
+                function(data) {
+                    $.each(data,
+                        function() {
+                            $("#editProduct_productCategory").append('<option value=' + this.value + '>' + this.text + '</option>');
+                        });
+                });
+            $("#editProduct_productSubCategory").empty();
+            $.getJSON("/home/GetSubCategory/" + $("#editProduct_productCategory :selected").val(),
+                function(data) {
+
+                    $.each(data,
+                        function() {
+                            $("#editProduct_productSubCategory").append('<option value=' + this.value + '>' + this.text + '</option>');
+
+                        });
+                });
+        });
+        $("#editProduct_productCategory").change(function() {
+            $("#editProduct_productSubCategory").empty();
+            $.getJSON("/home/GetSubCategory/" + $("#editProduct_productCategory :selected").val(),
+                function(data) {
+
+                    $.each(data,
+                        function() {
+                            $("#editProduct_productSubCategory").append('<option value=' + this.value + '>' + this.text + '</option>');
+
+                        });
+                });
+        });
+
+
+        $("#productImageFilesImageFiles").change(function() {
+            readURL(this);
+        });
+
+        function readURL(input) {
+
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function(e) {
+                    window.$('#imgCreateCourse').attr('src', e.target.result);
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        $("#imgCourseUp").change(function() {
+            readURL(this);
+        });
+    </script>
+}
+

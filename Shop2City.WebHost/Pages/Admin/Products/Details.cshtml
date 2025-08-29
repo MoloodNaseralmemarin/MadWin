@@ -1,0 +1,49 @@
+﻿@page "{id}"
+@model Shop2City.Web.DetailsModel
+@{
+    ViewData["Title"] = "Details";
+}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card-box">
+            <h4 class="m-t-0 m-b-30 header-title">اطلاعات کالا </h4>
+            <label>نام کالا : </label>
+            <span>@Model.detailProduct.Title</span>
+            <br />
+            <label>در این دسته ها قرار دارد :</label>
+            <span>
+                @Model.detailProduct.ProductGroup.Title -
+                @if (Model.detailProduct.Category == null)
+                {
+                    <span>انتخاب نشده - </span>
+                }
+                else
+                {
+                    @Model.detailProduct.Category.Title
+                }
+                @if (Model.detailProduct.SubCategory == null)
+                {
+                    <span>انتخاب نشده - </span>
+                }
+                else
+                {
+                    @Model.detailProduct.SubCategory.Title
+                }
+            </span>
+            <br />
+            <label>اطلاعات تکمیلی :</label>
+        </div>
+    </div>
+    <div class="col-md-4">
+        @*<div class="card-box">
+            <img src="~/products/images/@Model.detailProduct.productImageName" class="thumb-img" />
+        </div>*@
+
+    </div>
+    <div class="col-md-12">
+        <div class="card-box">
+            <h4 class="m-t-0 m-b-30 header-title">گالری عکس</h4>
+  
+        </div>
+    </div>
+</div>

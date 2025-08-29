@@ -1,0 +1,22 @@
+﻿@page "{id}"
+@model Shop2City.Web.Pages.Admin.Products.DeleteModel
+@{
+    ViewData["Title"] = "حذف محصولات";
+}
+<div class="container alert alert-danger">
+    <form method="post">
+        <input type="hidden" asp-for="DeleteProduct.Id" />
+        <input type="hidden" asp-for="DeleteProduct.CreateDate" />
+        <input type="hidden" asp-for="DeleteProduct.UserId" />
+        <input type="hidden" asp-for="DeleteProduct.ProductGroupId" />
+        <input type="hidden" asp-for="DeleteProduct.Category" />
+        <input type="hidden" asp-for="DeleteProduct.SubCategory" />
+        <input type="hidden" asp-for="DeleteProduct.Title" />
+        <h2>آیا از حذف نقش "@Model.DeleteProduct.Id" مطمئن هستید </h2>
+        <p>
+            <input type="submit" value="حذف کن" class="btn btn-outline btn-danger" />
+            <a asp-page="Index" class="btn btn-outline btn-info">انصراف</a>
+        </p>
+    </form>
+</div>
+

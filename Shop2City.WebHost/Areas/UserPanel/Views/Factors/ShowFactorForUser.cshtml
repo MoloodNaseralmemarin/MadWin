@@ -1,0 +1,48 @@
+﻿@using MadWin.Core.Entities.Factors
+
+@model Factor
+@{
+    ViewData["Title"] = "نمایش فاکتورها";
+}
+<div class="container">
+    <ul class="breadcrumb">
+        <li><a asp-controller="Home" asp-action="Index"><i class="fa fa-home"></i></a></li>
+        <li><a href="#" title="سبد خرید">سبد خرید</a></li>
+    </ul>
+    <div class="row">
+        <partial name="_SideBar" />
+        <div class="col-sm-9" id="content">
+            <h1 class="title">سبد خرید</h1>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>نام محصول</th>
+                            <th>تعداد</th>
+                            <th>قیمت</th>
+                            <th>جمع</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.FactorDetails)
+                        {
+                            <tr>
+                                <td>
+                                    @item.Product.Title
+                                </td>
+                                <td>
+                                    @item.Quantity
+                                </td>
+                                <td>@item.Price.ToString("#,0 ریال")</td>
+                                <td>
+                                    @((item.Quantity * item.Price).ToString("#,0 ریال"))
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

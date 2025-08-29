@@ -1,0 +1,26 @@
+﻿@using MadWin.Application.Services
+@inject IUserService UserService
+
+@{ 
+    //var user = UserService.GetSideBarUserPanelData(User.Identity.Name);
+}
+<aside id="column-right" class="col-sm-3 hidden-xs">
+    <div class="list-group">
+@*        <img class="img-responsive center-block" src="http://Shop2Citypc.ir/useravatar/@user.imageName" alt="تصویر پروفایل" />
+        <br />
+        <p class="text-center">عضویت : @user.registerDate.ToShamsi()</p>
+        <p class="text-center">@user.fullName</p>*@
+        <hr />
+        <h3 class="subtitle">میز کار</h3>
+        <ul class="list-item">
+            <li><a href="/Admin">مدیریت پنل سایت</a></li>
+            <li><a asp-area="UserPanel" asp-controller="Home" asp-action="Index">مشاهده حساب کاربری</a></li>
+            <li><a asp-area="UserPanel" asp-controller="Home" asp-action="EditProfile">ویرایش حساب کاربری</a></li>
+            <li><a asp-area="UserPanel" asp-controller="Home" asp-action="ChangePassword">تغییر رمز عبور</a></li>
+
+            <li><a href="/UserPanel/Orders/ShowOrder">لیست فاکتورها</a></li>
+            <li><a href="#">تنظیمات حساب کاربری</a></li>
+            <li><a asp-controller="Account" asp-action="Logout">خروج از حساب  کاربری</a></li>
+        </ul>
+    </div>
+</aside>

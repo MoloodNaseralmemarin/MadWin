@@ -1,0 +1,30 @@
+﻿@page "{id}"
+@model Shop2City.WebHost.Pages.Admin.ProductGroups.EditModel
+@{
+    ViewData["Title"] = "Edit";
+}
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card-box">
+                <h4 class="m-t-0 header-title">Form row</h4>
+                @*<p class="text-muted m-b-30 font-13">
+            You may also swap <code class="highlighter-rouge">.row</code> for <code class="highlighter-rouge">.form-row</code>, a variation of our standard grid row that overrides the default column gutters for tighter and more compact layouts.
+        </p>*@
+
+                <form method="post" enctype="multipart/form-data">
+                    <input type="hidden" asp-for="editProductGroup.Id" />
+                    <input type="hidden" asp-for="editProductGroup.ParentId" />
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label class="col-form-label" asp-for="editProductGroup.Title"></label>
+                        <input class="form-control" asp-for="editProductGroup.Title" type="text">
+                        <span asp-validation-for="editProductGroup.Title" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <input type="submit" class="btn btn-primary" value="ذخیره اطلاعات" />
+                </form>
+            </div>
+        </div>
+    </div>
+

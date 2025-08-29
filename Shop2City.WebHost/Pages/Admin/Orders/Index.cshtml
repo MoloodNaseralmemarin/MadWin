@@ -1,0 +1,142 @@
+﻿@page
+@model Shop2City.Web.Pages.Admin.Orders.IndexModel
+@using MadWin.Core.DTOs.Orders
+@using Shop2City.Core.Convertors
+@{
+    ViewData["Title"] = "گزارش سفارش‌ها";
+    var filter = Model.Filter;
+    var orders = Model.Orders;
+    var totalPages = (int)Math.Ceiling((double)orders.TotalCount / filter.PageSize);
+    var currentPage = filter.PageNumber;
+}
+
+<div class="mt-3 me-5 mb-3 ms-5">
+    <div class="card border-info mb-3">
+  <div class="card-header card text-bg-info mb-3 fs-3">
+    فیلترهای جستجو
+  </div>
+  <div class="card-body">
+      <form>
+            <div class="row">
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-3 mb-4">
+                    <label for="FromDate">از تاریخ:</label>
+                    <input type="date" id="FromDate" name="FromDate" value="@filter?.FromDate?.ToString("yyyy-MM-dd")" class="form-control" />
+                </div>
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-3 mb-4">
+                    <label for="ToDate">تا تاریخ:</label>
+                    <input type="date" id="ToDate" name="ToDate" value="@filter?.ToDate?.ToString("yyyy-MM-dd")" class="form-control" />
+                </div>
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-3 mb-4">
+                    <label for="OrderId">کد سفارش:</label>
+                    <input type="number" id="OrderId" name="OrderId" value="@filter?.OrderId" placeholder="کد سفارش" class="form-control" />
+                </div>
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-3 mb-4">
+                    <label for="FullName">مشتری:</label>
+                    <input type="text" id="FullName" name="FullName" value="@filter?.FullName" placeholder="نام کامل" class="form-control" />
+                </div>
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-3 mb-4">
+                    <label for="FromPrice">از مبلغ:</label>
+                    <input type="number" id="FromPrice" name="FromPrice" value="@filter?.FromPrice" placeholder="حداقل مبلغ" class="form-control" />
+                </div>
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-3 mb-4">
+                    <label for="ToPrice">تا مبلغ:</label>
+                    <input type="number" id="ToPrice" name="ToPrice" value="@filter?.ToPrice" placeholder="حداکثر مبلغ" class="form-control" />
+                </div>
+            </div>
+
+            <div class="button-group mt-3">
+                <button type="submit" class="btn btn-primary">جستجو</button>
+            </div>
+        </form>
+  </div>
+</div>
+</div>
+@if (orders?.Items != null && orders.Items.Any())
+{
+    <div class="row mt-3 me-5 mb-3 ms-5">
+               <h4>لیست سفارش های دریافتی</h4>
+        @foreach (var item in orders.Items)
+        {
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-3 mb-4">
+                <div class="card @(item.IsFinaly ? "border-success" : "") h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">کد سفارش: @item.OrderId</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">@item.FullName</h6>
+                        <p class="card-text mb-1"><strong>تاریخ:</strong> @item.CreateDate.ToShamsi()</p>
+                        <p class="card-text mb-1"><strong>دسته‌بندی:</strong> @item.CategoryGroup</p>
+                        <p class="card-text mb-1"><strong>ابعاد:</strong> @item.Size</p>
+                        <p class="card-text mb-1"><strong>تعداد:</strong> @item.Count</p>
+                        <p class="card-text mb-1"><strong>مبلغ:</strong> @item.PriceWithFee.ToString("N0") تومان</p>
+                        <p class="card-text"><strong>وضعیت:</strong> @Html.Raw(item.IsFinaly ? "<span class='text-success'>تسویه شد</span>" : "<span class='text-danger'>تسویه نشده است</span>")</p>
+                        <div class="d-grid gap-2 col-6 mx-auto">
+<a class="icon-link icon-link-hover" style="--bs-icon-link-transform: translate3d(0, -.125rem, 0);" asp-controller="Orders" asp-action="ShowOrderDetail" asp-id="@item.OrderId">
+  <svg xmlns="http://www.w3.org/2000/svg" class="bi" viewBox="0 0 16 16" aria-hidden="true">
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+    <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+  </svg>
+  مشاهده بیشتر
+</a></div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+<nav>
+    <ul class="pagination justify-content-center flex-wrap">
+        <!-- قبلی -->
+        <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+            <a class="page-link" href="@Url.Page("Index", null, new {
+                filter.FullName,
+                filter.OrderId,
+                filter.FromDate,
+                filter.ToDate,
+                filter.FromPrice,
+                filter.ToPrice,
+                PageNumber = currentPage - 1,
+                filter.PageSize
+            }, null)">قبلی</a>
+        </li>
+
+        @for (int i = 1; i <= totalPages; i++)
+        {
+            // در موبایل فقط صفحات کناری فعلی نمایش داده شوند
+            var showOnMobile = (Math.Abs(i - currentPage) <= 1); // صفحه فعلی ±1
+            var displayClass = showOnMobile ? "" : "d-none d-sm-inline"; // مخفی در موبایل
+
+            <li class="page-item @(i == currentPage ? "active" : "") @displayClass">
+                <a class="page-link" href="@Url.Page("Index", null, new {
+                    filter.FullName,
+                    filter.OrderId,
+                    filter.FromDate,
+                    filter.ToDate,
+                    filter.FromPrice,
+                    filter.ToPrice,
+                    PageNumber = i,
+                    filter.PageSize
+                }, null)">@i</a>
+            </li>
+        }
+
+        <!-- بعدی -->
+        <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+            <a class="page-link" href="@Url.Page("Index", null, new {
+                filter.FullName,
+                filter.OrderId,
+                filter.FromDate,
+                filter.ToDate,
+                filter.FromPrice,
+                filter.ToPrice,
+                PageNumber = currentPage + 1,
+                filter.PageSize
+            }, null)">بعدی</a>
+        </li>
+    </ul>
+</nav>
+
+}
+else
+{
+    <div class="alert alert-warning">
+        هیچ سفارشی یافت نشد.
+    </div>
+}

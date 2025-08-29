@@ -1,0 +1,89 @@
+﻿@page
+@using MadWin.Core.Entities.Users
+@model Shop2City.WebHost.Pages.Admin.Users.CreateModel
+@{
+    ViewData["Title"] = "افزودن کاربر جدید";
+    List<Role> Roles = ViewData["Roles"] as List<Role>;
+}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card-box">
+            <h4 class="m-t-0 m-b-30 header-title">ثبت کاربر</h4>
+
+            <form method="post">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label asp-for="createUser.firstName"></label>
+                            <input type="text" class="form-control" asp-for="createUser.firstName">
+                            <span class="text-danger" asp-validation-for="createUser.firstName"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="createUser.lastName"></label>
+                            <input type="text" class="form-control" asp-for="createUser.lastName">
+                            <span class="text-danger" asp-validation-for="createUser.lastName"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label asp-for="createUser.cellPhone"></label>
+                            <input type="text" class="form-control" asp-for="createUser.cellPhone">
+                            <span class="text-danger" asp-validation-for="createUser.cellPhone"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="createUser.tellPhone"></label>
+                            <input type="text" class="form-control" asp-for="createUser.tellPhone">
+                            <span class="text-danger" asp-validation-for="createUser.tellPhone"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="createUser.address"></label>
+                    <textarea type="text" class="form-control" asp-for="createUser.address" rows="3"></textarea>
+                    <span class="text-danger" asp-validation-for="createUser.address"></span>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label asp-for="createUser.userName"></label>
+                            <input type="text" class="form-control" asp-for="createUser.userName">
+                            <span class="text-danger" asp-validation-for="createUser.userName"></span>
+
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="createUser.password"></label>
+                            <input type="password" class="form-control" asp-for="createUser.password">
+                            <span class="text-danger" asp-validation-for="createUser.password"></span>
+                          
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">ثبت اطلاعات</button>
+            </form>
+        </div>
+    </div>
+    <!-- end col -->
+    <div class="col-md-4">
+        <div class="card-box">
+            <h4 class="m-t-0 m-b-30 header-title">انتخاب نقش</h4>
+            <div class="form-group row">
+                <div class="col-9">
+                    @foreach (var item in Roles)
+                    {
+                        <div>
+                            <label>
+                                <input type="checkbox" name="SelectedRoles" value="@item.roleId"> @item.roleTitle
+                            </label>
+                        </div>
+                    }
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+</div>
+

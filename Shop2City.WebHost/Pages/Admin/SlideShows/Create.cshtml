@@ -1,0 +1,45 @@
+﻿@page
+@model Shop2City.Web.Pages.Admin.SlideShows.CreateModel
+@{
+    ViewData["Title"] = "جدید";
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card-box">
+            <p class="text-muted m-b-30 font-13">
+                <a asp-page="Create" class="pull-left"> مورد جدید </a>
+                <a asp-page="Index" class="pull-right"> برگشت به فهرست محصولات</a>
+            </p>
+            <form method="post" enctype="multipart/form-data">
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label class="col-form-label" asp-for="createSlideShow.Title"></label>
+                        <input class="form-control" asp-for="createSlideShow.Title" type="text">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label class="col-form-label" asp-for="createSlideShow.Alt"></label>
+                        <input class="form-control" asp-for="createSlideShow.Alt" type="text">
+                        <span asp-validation-for="createSlideShow.Alt" class="text-danger"></span>
+                    </div>
+                </div>
+                    <div class="form-row">
+                        <div class="form-group col">
+                            <label class="col-form-label" asp-for="createSlideShow.IsActive"></label>
+                            <input type="checkbox" class="form-control" asp-for="createSlideShow.IsActive" />
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="form-row">
+                        <div class="form-group col">
+                            <label class="col-form-label" asp-for="createSlideShow.FileName"></label>
+                            <input type="file" id="imgProduct" name="imgProduct" class="dropify">
+                        </div>
+                    </div>
+                    <input type="submit" class="btn btn-success" value="ذخیره اطلاعات" />
+                    <a asp-page="Create" class="btn btn-info">پاک کردن</a>
+                    <a asp-page="Index" class="btn btn-primary" data-toggle="tooltip" title="مشاهده لیست محصولات درج شده">بازگشت به فهرست</a>
+
+</form>
+        </div>
+    </div>
+</div>

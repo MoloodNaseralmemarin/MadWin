@@ -1,0 +1,47 @@
+﻿<div class="container">
+    <div class="row">
+        <!-- نام فروشگاه -->
+        <div class="col-md-6">
+            <a class="navbar-brand text-white" href="#">فروشگاه اینترنتی ماد وین</a>
+        </div>
+
+        <!-- منوی ناوبری -->
+        <div class="col-md-6 d-flex justify-content-end">
+            <!-- لینک‌های ناوبری که در موبایل نمایش داده نمی‌شود -->
+            <ul class="nav d-none d-md-flex justify-content-end">
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="#">ثبت ‌نام</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="#">ورود</a>
+                </li>
+            </ul>
+
+            <!-- آیکون سبد خرید -->
+            @await Component.InvokeAsync("CartBadgeComponent")
+
+            <!-- دکمه همبرگر برای موبایل -->
+            <button class="navbar-toggler d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu" aria-controls="offcanvasMenu" style="border: none; color: transparent;">
+                <span class="navbar-toggler-icon" style="color: white;"></span>
+            </button>
+        </div>
+    </div>
+</div>
+<!-- منوی Offcanvas -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasMenuLabel">منوی فروشگاه</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <!-- لینک‌ها در منوی کشویی -->
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link text-dark" href="#">ثبت ‌نام</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-dark" href="#">ورود</a>
+            </li>
+        </ul>
+    </div>
+</div>
