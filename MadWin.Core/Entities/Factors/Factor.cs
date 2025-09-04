@@ -47,7 +47,7 @@ namespace MadWin.Core.Entities.Factors
         /// قیمت کل محصولات
         /// </summary>
         [Required]
-        public decimal FactorSum { get; set; }
+        public decimal TotalPrice { get; set; }
         /// <summary>
         /// فاکتور پرداخت کرده و فاکتور نهایی شده
         /// </summary>

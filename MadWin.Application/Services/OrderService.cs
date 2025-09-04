@@ -24,7 +24,7 @@ namespace MadWin.Application.Services
             _logger = logger;
         }
 
-        public async Task<int> CreateOrderInitialAsync(CreateOrderInitialDto dto,int userId,decimal basePrice)
+        public async Task<int> CreateOrderInitialAsync(CreateOrderInitialDto dto, int userId, decimal basePrice)
         {
             var order = new Order
             {
@@ -38,18 +38,24 @@ namespace MadWin.Application.Services
                 PartCount = dto.PartCount,
                 IsEqualParts = dto.IsEqualParts
             };
+
             await _orderRepository.AddAsync(order);
-            await _orderRepository.SaveChangesAsync();
-            foreach (var width in dto.WidthParts)
+            await _orderRepository.SaveChangesAsync(); // اینجا Id ساخته می‌شود
+
+            if (dto.WidthParts != null && dto.WidthParts.Any())
             {
-                order.WidthParts.Add(new OrderWidthPart
+                foreach (var width in dto.WidthParts)
                 {
-                    WidthValue = width
-                });
+                    var widthPart = new OrderWidthPart
+                    {
+                        OrderId = order.Id,
+                        WidthValue = width
+                    };
+                    await _orderWidthPartRepository.AddAsync(widthPart);
+                }
+                await _orderWidthPartRepository.SaveChangesAsync();
             }
-           
-            await _orderWidthPartRepository.SaveChangesAsync();
-           
+
             return order.Id;
         }
 
@@ -132,6 +138,11 @@ namespace MadWin.Application.Services
         public async Task<PagedResult<OrderSummaryDto>> GetOrderSummaryAsync(OrderFilterParameters filter)
         {
             return await _orderRepository.GetOrderSummaryAsync(filter);
+        }
+
+        public async Task<PagedResult<OrderSummaryDto>> GetTodayOrdersAsync(int PageNumber = 1, int PageSize = 10)
+        {
+            return await _orderRepository.GetTodayOrdersAsync(PageNumber, PageSize);
         }
     }
 }

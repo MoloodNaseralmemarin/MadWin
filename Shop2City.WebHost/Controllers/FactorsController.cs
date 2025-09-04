@@ -1,24 +1,23 @@
 ﻿using MadWin.Application.Services;
 using MadWin.Core.DTOs.Orders;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shop2City.WebHost.ViewModels.Factors;
 using System.Security.Claims;
 
-namespace Shop2City.WebHost.Areas.UserPanel.Controllers
+namespace Shop2City.WebHost.Controllers
 {
-    [Area("UserPanel")]
-    [Authorize]
     public class FactorsController : Controller
     {
         private readonly IFactorDetailService _factorDetailService;
         private readonly IDeliveryMethodService _deliveryMethodService;
         private readonly IDiscountService _discountService;
-        public FactorsController(IFactorDetailService factorDetailService, IDeliveryMethodService deliveryMethodService, IDiscountService discountService)
+        private readonly IFactorService _factorService;
+        public FactorsController(IFactorDetailService factorDetailService, IDeliveryMethodService deliveryMethodService, IDiscountService discountService, IFactorService factorService)
         {
             _factorDetailService = factorDetailService;
             _deliveryMethodService = deliveryMethodService;
             _discountService = discountService;
+            _factorService = factorService;
         }
 
         public async Task<IActionResult> GetFactorSummary(int factorId)
@@ -36,6 +35,30 @@ namespace Shop2City.WebHost.Areas.UserPanel.Controllers
             };
 
             return View(viewModel);
+        }
+        #region حذف آیتم از فاکتور
+        public async Task<IActionResult> RemoveItemsByFactorAsync(int factorId, int[] factorDetailIds)
+        {
+            if (factorDetailIds == null || !factorDetailIds.Any())
+                return Json(new { success = false });
+
+            await _factorDetailService.SoftDeleteAsync(factorDetailIds);
+
+            // حالا می‌توانیم اطلاعات فاکتور را دوباره بگیریم
+            var updatedList = await _factorDetailService.GetFactorSummaryByFactorIdAsync(factorId);
+
+            return Json(new { success = true, data = updatedList });
+        }
+
+
+        #endregion
+
+        [HttpGet]
+        public IActionResult GetSubtotalPrice(int factorId)
+        {
+            var subtotal = _factorService.GetSubtotal(factorId);
+            return Json(new { price = subtotal.ToString("N0") });
+
         }
 
         #region کد تخفیف

@@ -25,5 +25,7 @@ namespace MadWin.Application.Services
 
         Task<PagedResult<OrderSummaryDto>> GetOrderSummaryAsync(OrderFilterParameters filter);
 
+        Task<PagedResult<OrderSummaryDto>> GetTodayOrdersAsync(int PageNumber = 1, int PageSize = 10);
+
     }
 }

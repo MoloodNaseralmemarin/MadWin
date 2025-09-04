@@ -34,7 +34,7 @@ Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
     .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day)
     .WriteTo.MSSqlServer(
-        connectionString: builder.Configuration.GetConnectionString("Development"),
+        connectionString: builder.Configuration.GetConnectionString("Production"),
         sinkOptions: new MSSqlServerSinkOptions
         {
             TableName = "Logs",
@@ -149,7 +149,7 @@ builder.Services.AddHttpClient();
 var app = builder.Build();
 
 // ────── Error Handling ──────
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsProduction())
 {
     app.UseDeveloperExceptionPage();
 }

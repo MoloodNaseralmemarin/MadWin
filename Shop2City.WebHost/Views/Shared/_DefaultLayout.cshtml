@@ -28,10 +28,6 @@
             </div>
         </div>
     </section>
-
-
-
-
     @RenderBody()
 
 <!--Footer Start-->
@@ -39,7 +35,6 @@
 <!--Footer End-->
     <!-- JS Part Start-->
         <partial name="_JS"/>
-    @await RenderSectionAsync("Styles", required: false)
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

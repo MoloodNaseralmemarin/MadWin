@@ -340,5 +340,68 @@ namespace MadWin.Infrastructure.Repositories
                 TotalCount = totalCount
             };
         }
+
+        public async Task<PagedResult<OrderSummaryDto>> GetTodayOrdersAsync(int PageNumber = 1, int PageSize = 10)
+        {
+            var today = DateTime.Today;
+            var tomorrow = today.AddDays(1);
+
+            var query = _context.Orders
+                .Include(o => o.OrderCategory)
+                .Include(o => o.OrderSubCategory)
+                .Include(o => o.User)
+                .Where(o => o.CreateDate >= today && o.CreateDate < tomorrow)
+                .AsQueryable();
+
+            int totalCount = await query.CountAsync();
+
+            var skip = (PageNumber - 1) * PageSize;
+
+            var orders = await query
+                .OrderByDescending(o => o.CreateDate)
+                .Skip(skip)
+                .Take(PageSize)
+                .Select(o => new OrderSummaryDto
+                {
+                    CreateDate = o.CreateDate,
+                    OrderId = o.Id,
+                    FullName = $"{o.User.FirstName} {o.User.LastName}",
+                    CategoryGroup = $"{o.OrderCategory.Title} / {o.OrderSubCategory.Title}".Trim(),
+                    Size = $"ارتفاع: {o.Height} - عرض: {o.Width}",
+                    SizeSMS = $"w: {o.Width} * h: {o.Height}",
+                    Count = o.Count,
+                    PriceWithFee = o.PriceWithFee,
+                    IsEqualParts = o.IsEqualParts,
+                    PartCount = o.PartCount,
+                    IsFinaly = o.IsFinaly
+                }).ToListAsync();
+
+            var orderIds = orders.Select(o => o.OrderId).ToList();
+
+            var widthParts = await _context.Set<OrderWidthPart>()
+                .Where(w => orderIds.Contains(w.OrderId))
+                .Select(w => new
+                {
+                    w.OrderId,
+                    w.WidthValue
+                }).ToListAsync();
+
+            foreach (var order in orders)
+            {
+                order.WidthParts = widthParts
+                    .Where(wp => wp.OrderId == order.OrderId)
+                    .Select(wp => new OrderWidthPartDto
+                    {
+                        WidthValue = wp.WidthValue
+                    }).ToList();
+            }
+
+            return new PagedResult<OrderSummaryDto>
+            {
+                Items = orders,
+                TotalCount = totalCount
+            };
+        }
+
     }
 }

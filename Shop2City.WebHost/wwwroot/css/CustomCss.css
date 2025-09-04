@@ -12,6 +12,11 @@
 body {
     direction: rtl;
 }
+.custom-alert{
+    background: linear-gradient(135deg, #fff8e1, #fff3cd);
+    border: 1px solid #ffeeba;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
 
 header {
     color: #fff;
@@ -169,6 +174,101 @@ footer{
     font-size: 16px;
 }
 
+/* Radio hover effect */
+.form-check-input:hover {
+    cursor: pointer;
+    transform: scale(1.05);
+    transition: all 0.2s ease-in-out;
+}
+
+/* دکمه‌های گرد و Hover */
+.modal-footer .btn {
+    transition: all 0.2s ease-in-out;
+}
+
+    .modal-footer .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+    }
+
+/* Input container spacing */
+#input-container input {
+    min-width: 80px;
+}
+/* فاصله بیشتر بین رادیوها */
+.custom-radio-group label {
+    display: block;
+    padding: 10px 15px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+    user-select: none;
+}
+
+.custom-radio-group input[type="radio"] {
+    display: none;
+}
+
+.custom-radio-group label strong {
+    pointer-events: none;
+}
+
+.custom-alert {
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 1.5rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    color: #856404;
+    margin-bottom: 20px;
+    background-color: #fff3cd;
+    border: 1px solid #ffeeba;
+}
+
+.alert-icon {
+    flex-shrink: 0;
+    margin-right: 12px;
+    width: 28px;
+    height: 28px;
+}
+
+.alert-text strong {
+    font-weight: 700;
+}
+
+.division-card {
+    cursor: pointer;
+    transition: all 0.3s;
+    min-width: 150px;
+    text-align: center;
+}
+
+    .division-card input {
+        display: none;
+    }
+
+    .division-card.selected {
+        background-color: #28a745;
+        color: white;
+        border-color: #28a745;
+    }
+
+    .division-card label {
+        cursor: pointer;
+    }
+
+.width-input {
+    border-radius: 0.5rem;
+}
+
+.bg-success
+{
+    background-color:#8fe16a !important;
+}
+.bg-warning {
+    background-color: #ecf391 !important;
+}
 /* افکت لرزش کوتاه */
 @keyframes shake {
     0% {
@@ -199,6 +299,7 @@ footer{
 .shake {
     animation: shake 0.5s;
 }
+
 
 @media (max-width: 767.98px) {
     .form-control-md.d-md-block {
