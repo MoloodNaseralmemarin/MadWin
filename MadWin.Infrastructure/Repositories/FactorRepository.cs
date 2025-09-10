@@ -31,7 +31,7 @@ namespace MadWin.Infrastructure.Repositories
             Factor factor=new Factor();
             factor.UserId = userId;
             factor.IsFinaly = false;
-            factor.FactorSum = 0;
+            factor.TotalPrice = 0;
           //  factor.
             await AddAsync(factor);
             await _context.SaveChangesAsync();
@@ -41,7 +41,7 @@ namespace MadWin.Infrastructure.Repositories
         {
             var factor = await GetByIdAsync(factorId);
             var factorSum =await _factorDetailRepository.FactorSum(factorId);
-            factor.FactorSum = factorSum;
+            factor.TotalPrice = factorSum;
             Update(factor);    
             await SaveChangesAsync();
         }
@@ -64,19 +64,17 @@ namespace MadWin.Infrastructure.Repositories
         public async Task<FactorInfoLookup> GetFactorInfoByFactorIdAsync(int factorId)
         {
             var factor = await _context.Set<Factor>()
-                .Where(o => o.Id == factorId)
-                .Select(o => new FactorInfoLookup
+                .Where(f => f.Id == factorId)
+                .Where(f => f.FactorDetails.Any(fd => !fd.IsDelete)) // شرط روی FactorDetails
+                .Select(f => new FactorInfoLookup
                 {
-                    FactorId = o.Id,
-                    Price = o.FactorSum
-                }).FirstOrDefaultAsync();
+                    FactorId = f.Id,
+                    Price = f.TotalPrice
+                })
+                .FirstOrDefaultAsync();
 
-            if (factor == null)
-                return null;
             return factor;
         }
-
-
 
         public async Task<Factor> GetFactorByFactorIdAsync(int factorId)
         {
@@ -93,5 +91,15 @@ namespace MadWin.Infrastructure.Repositories
             _context.Set<Factor>().Update(factor);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<Factor?> GetOpenFactorByUserIdAsync(int userId)
+        {
+            return await _context.Factors
+                .Include(f => f.FactorDetails) // اگه نیاز داری جزئیات فاکتور رو هم بیاره
+                .FirstOrDefaultAsync(f => f.UserId == userId
+                                          && !f.IsFinaly
+                                          && !f.IsDelete);
+        }
+
     }
 }

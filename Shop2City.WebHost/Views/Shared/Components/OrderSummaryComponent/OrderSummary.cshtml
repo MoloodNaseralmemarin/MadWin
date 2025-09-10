@@ -1,0 +1,130 @@
+﻿@using MadWin.Core.DTOs.Orders
+@using Shop2City.Core.Convertors
+@model PagedResult<OrderSummaryDto>
+
+<div class="container mt-3">
+    <h4 class="mb-3">سفارشات امروز <span class="badge bg-primary">@Model.Items.Count()</span></h4>
+
+    <!-- جدول دسکتاپ -->
+    <div class="table-responsive d-none d-md-block">
+        <table class="table table-bordered table-hover order-table align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th><input type="checkbox" id="selectAll" /></th>
+                    <th>تاریخ</th>
+                    <th>ساعت</th>
+                    <th>نام محصول</th>
+                    <th>تعداد</th>
+                    <th>قیمت واحد</th>
+                    <th>قیمت کل</th>
+                    <th>عملیات</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Items)
+                {
+                    var statusClass = item.IsEqualParts ? "bg-success text-white" : "bg-warning text-dark";
+
+                    <tr>
+                        <td rowspan="2"><input type="checkbox" class="delete-checkbox" value="@item.OrderId" /></td>
+                        <td>@item.CreateDate.ToShamsi()</td>
+                        <td>@item.CreateDate.ToString("HH:mm:ss")</td>
+                        <td>@item.CategoryGroup</td>
+                        <td><span class="badge bg-info">@item.Count</span></td>
+                        <td><span>@item.PriceWithFee.ToString("N0") ریال</span></td>
+                        <td><span>@item.SubtotalPrice.ToString("N0") ریال</span></td>
+                        <td rowspan="2" class="text-center align-middle ">
+                            <i class="fas fa-trash text-danger"></i>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>@(item.IsEqualParts ? "قطعات مساوی هستند" : "قطعات اندازه‌های مختلف دارند")</td>
+
+                        <td>تعداد قطعات: @item.PartCount</td>
+
+                        <td>@item.Size</td>
+                        <td colspan="3">
+                            موقعیت قطعات:
+                            @for (int i = 0; i < item.WidthParts.Count; i++)
+                            {
+                                string position = item.WidthParts.Count == 3
+                                ? (i == 0 ? "چپ" : i == 1 ? "وسط" : "راست")
+                                : (i % 2 == 0 ? "راست" : "چپ");
+                                <span class="d-inline-block me-3"><strong>@position:</strong> @item.WidthParts[i].WidthValue</span>
+                            }
+                        </td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+
+    <!-- کارت موبایل -->
+    <div class="d-block d-md-none">
+        @foreach (var item in Model.Items)
+        {
+            var statusBg = item.IsEqualParts ? "bg-success text-white" : "bg-warning text-dark";
+            <div class="card mb-3 shadow-sm border-0">
+                <div class="card-header @statusBg d-flex justify-content-between align-items-center">
+                    <span>@item.CategoryGroup</span>
+                    <small>@item.CreateDate.ToShamsi() - @item.CreateDate.ToString("HH:mm:ss")</small>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-2">
+                        <div class="col-6"><strong>تعداد انتخاب‌شده:</strong> <span class="badge bg-info">@item.Count</span></div>
+                        <div class="col-6"><strong>وضعیت قطعات:</strong> @(item.IsEqualParts ? "قطعات مساوی هستند" : "قطعات اندازه‌های مختلف دارند")</div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-6"><strong>قیمت واحد:</strong> <span class="badge bg-secondary">@item.PriceWithFee.ToString("N0") ریال</span></div>
+                        <div class="col-6"><strong>قیمت کل:</strong> <span class="badge bg-primary">@item.SubtotalPrice.ToString("N0") ریال</span></div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-6"><strong>ابعاد (ارتفاع × عرض):</strong> @item.Size</div>
+                        <div class="col-6"><strong>تعداد قطعات:</strong> @item.PartCount</div>
+                    </div>
+
+                    @if (item.WidthParts.Count > 0)
+                    {
+                        <div class="mt-2">
+                            <strong>محل نصب و عرض:</strong>
+                            <div class="row">
+                                @for (int i = 0; i < item.WidthParts.Count; i++)
+                                {
+                                    string position = item.WidthParts.Count == 3 ? (i == 0 ? "چپ" : i == 1 ? "وسط" : "راست") : (i % 2 == 0 ? "راست" : "چپ");
+                                    <div class="col-6 mb-1">
+                                        <span class="fw-bold">@position:</span> @item.WidthParts[i].WidthValue
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+
+                    <!-- عملیات -->
+                    <div class="mt-2 d-flex justify-content-end">
+                        <a href="#" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i> حذف</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Pagination -->
+    @if (Model.TotalCount > 10)
+    {
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center mt-3 flex-wrap">
+                @{
+                    var totalPages = (int)Math.Ceiling(Model.TotalCount / 10.0);
+                    for (int i = 1; i <= totalPages; i++)
+                    {
+                        <li class="page-item @(i == 1 ? "active" : "")">
+                            <a class="page-link" href="#">@i</a>
+                        </li>
+                    }
+                }
+            </ul>
+        </nav>
+    }
+</div>

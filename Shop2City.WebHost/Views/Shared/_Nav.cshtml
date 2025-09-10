@@ -1,47 +1,45 @@
-﻿<div class="container">
-    <div class="row">
-        <!-- نام فروشگاه -->
-        <div class="col-md-6">
-            <a class="navbar-brand text-white" href="#">فروشگاه اینترنتی ماد وین</a>
-        </div>
+﻿<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+        <!-- لوگو سمت چپ -->
+        <a class="navbar-brand fs-4 text-white" href="#">فروشگاه ماد وین</a>
 
-        <!-- منوی ناوبری -->
-        <div class="col-md-6 d-flex justify-content-end">
-            <!-- لینک‌های ناوبری که در موبایل نمایش داده نمی‌شود -->
-            <ul class="nav d-none d-md-flex justify-content-end">
+        <!-- دکمه همبرگر برای موبایل -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="باز کردن منو">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- آیتم‌های منو -->
+        <div class="collapse navbar-collapse" id="mainNav">
+            <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link text-white" href="#">ثبت ‌نام</a>
+                    <a class="nav-link text-white fs-5 active hover-shadow" href="#">صفحه اصلی</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-white" href="#">ورود</a>
+                    <a class="nav-link text-white fs-5 hover-shadow" href="#">انواع پرده</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white fs-5 hover-shadow" href="#">ثبت پرده سفارشی</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white fs-5 hover-shadow" href="#">درباره ما</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white fs-5 hover-shadow" href="#">بلاگ</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white fs-5 hover-shadow" href="#">ثبت نام</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white fs-5 hover-shadow" href="#">ورود</a>
                 </li>
             </ul>
 
-            <!-- آیکون سبد خرید -->
-            @await Component.InvokeAsync("CartBadgeComponent")
-
-            <!-- دکمه همبرگر برای موبایل -->
-            <button class="navbar-toggler d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu" aria-controls="offcanvasMenu" style="border: none; color: transparent;">
-                <span class="navbar-toggler-icon" style="color: white;"></span>
-            </button>
+            <!-- دکمه سمت راست -->
+            <ul class="navbar-nav mb-2 mb-lg-0 ms-auto">
+                <li class="nav-item mt-2 mt-lg-0">
+                    @await Component.InvokeAsync("CartBadgeComponent")
+                </li>
+            </ul>
         </div>
     </div>
-</div>
-<!-- منوی Offcanvas -->
-<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
-    <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasMenuLabel">منوی فروشگاه</h5>
-        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-    </div>
-    <div class="offcanvas-body">
-        <!-- لینک‌ها در منوی کشویی -->
-        <ul class="nav flex-column">
-            <li class="nav-item">
-                <a class="nav-link text-dark" href="#">ثبت ‌نام</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-dark" href="#">ورود</a>
-            </li>
-        </ul>
-    </div>
-</div>
+</nav>

@@ -61,32 +61,32 @@ namespace MadWin.Core.DTOs.Orders
 
 
 
-    public class OrderViewModel
-    {
+    //public class OrderViewModel
+    //{
 
-        [Display(Name = "گروه اصلی")]
-        [Required(ErrorMessage = "انتخاب گروه اصلی الزامی می باشد")]
-        public int CategoryId { get; set; }
+    //    [Display(Name = "گروه اصلی")]
+    //    [Required(ErrorMessage = "انتخاب گروه اصلی الزامی می باشد")]
+    //    public int CategoryId { get; set; }
 
-        [Display(Name = "گروه فرعی")]
-        [Required(ErrorMessage = "انتخاب گروه فرعی الزامی می باشد")]
-        public int SubCategoryId { get; set; }
+    //    [Display(Name = "گروه فرعی")]
+    //    [Required(ErrorMessage = "انتخاب گروه فرعی الزامی می باشد")]
+    //    public int SubCategoryId { get; set; }
 
-        [Display(Name = "ارتفاع")]
-        [Required(ErrorMessage ="وارد کردن اندازه ارتفاع الزامی می باشد")]
-        [Range(150, 400, ErrorMessage = ErrorMessage.Range)]
-        public int Height { get; set; }
+    //    [Display(Name = "ارتفاع")]
+    //    [Required(ErrorMessage ="وارد کردن اندازه ارتفاع الزامی می باشد")]
+    //    [Range(150, 400, ErrorMessage = ErrorMessage.Range)]
+    //    public int Height { get; set; }
 
-        [Display(Name = "عرض")]
-        [Required(ErrorMessage = "وارد کردن اندازه عرض الزامی می باشد")]
-        [Range(50, 400, ErrorMessage = ErrorMessage.Range)]
+    //    [Display(Name = "عرض")]
+    //    [Required(ErrorMessage = "وارد کردن اندازه عرض الزامی می باشد")]
+    //    [Range(50, 400, ErrorMessage = ErrorMessage.Range)]
 
-        public int Width { get; set; }
+    //    public int Width { get; set; }
 
-        [Display(Name = "تعداد")]
-        [Required(ErrorMessage = "وارد کردن تعداد سفارش الزامی می باشد")]
-        public int Count { get; set; }
-    }
+    //    [Display(Name = "تعداد")]
+    //    [Required(ErrorMessage = "وارد کردن تعداد سفارش الزامی می باشد")]
+    //    public int Count { get; set; }
+    //}
 
     public class OrderDetailViewModel
     { 
@@ -114,4 +114,34 @@ namespace MadWin.Core.DTOs.Orders
 
         public int countPage { get; set; }
     }
+
+
+
+    public class OrderViewModel
+    {
+        public int CategoryId { get; set; }
+        public int SubCategoryId { get; set; }
+        public decimal Width { get; set; }
+        public decimal Height { get; set; }
+        public int Count { get; set; }
+        public string DivisionType { get; set; }
+
+        // همیشه مقداردهی شده تا خطای null ندهد
+        public List<PreviousOrderDto> PreviousOrders { get; set; } = new List<PreviousOrderDto>();
+    }
+
+    public class PreviousOrderDto
+    {
+        public int CategoryId { get; set; }
+
+        public string CategoryName { get; set; }
+        public string SubCategoryName { get; set; }
+        public decimal Width { get; set; }
+        public decimal Height { get; set; }
+        public int Count { get; set; }
+        public string DivisionType { get; set; }
+        public List<decimal> WidthParts { get; set; } = new List<decimal>();
+    }
+
+
 }

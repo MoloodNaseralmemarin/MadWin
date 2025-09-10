@@ -2,6 +2,7 @@
 using MadWin.Core.Entities.Common;
 using MadWin.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
 {
@@ -25,5 +26,26 @@ public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
     {
         return _dbSet.AsQueryable();
     }
+
+    public async Task<List<T>> GetByIdsAsync(IEnumerable<int> ids)
+    {
+        return await _context.Set<T>()
+            .Where(x => ids.Contains(x.Id) && !x.IsDelete)
+            .ToListAsync();
+    }
+
+    public async Task<List<T>> GetByConditionAsync(Expression<Func<T, bool>> predicate)
+    {
+        return await _context.Set<T>()
+            .Where(predicate)
+            .ToListAsync();
+    }
+
+    public void UpdateRange(IEnumerable<T> entities)
+    {
+        _context.Set<T>().UpdateRange(entities);
+    }
+
+
 }
 

@@ -18,6 +18,9 @@ namespace MadWin.Core.Interfaces
 
         Task<List<FactorDetail>> GetAllFactorDetailByFactorIdAsync(int factorId);
 
+        Task<FactorDetail?> GetFactorDetailByProductIdAsync(int factorId, int productId);
+
+        decimal GetSubtotalByFactorId(int factorId);
 
     }
 }

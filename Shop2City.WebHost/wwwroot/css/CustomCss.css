@@ -3,211 +3,110 @@
     font-family: 'WYekan';
     src: url('../fonts/WYekan.eot?#') format('eot'), url('../fonts/WYekan.ttf') format('truetype');
 }
-
+@font-face {
+    font-family: 'IRANSansWeb';
+    src: url('../fonts/IRANSansWeb.eot?#') format('eot'), url('../fonts/IRANSansWeb.ttf') format('truetype');
+}
 * {
-    font-family: 'WYekan';
+    font-family: "WYekan";
+    font-size: 1rem;
+}
+
+body {
+    direction: rtl;
     padding:0;
     margin:0;
 }
-body {
-    direction: rtl;
-}
-
-header {
-    color: #fff;
-}
-footer{
-    color:#fff;
-}
-
-/* تغییر عرض نوار اسکرول */
-.d-flex::-webkit-scrollbar {
-    width: 8px; /* عرض نوار اسکرول */
-}
-
-/* تغییر ظاهر پس‌زمینه نوار اسکرول */
-.d-flex::-webkit-scrollbar-track {
-    background: #f1f1f1; /* رنگ پس‌زمینه */
-    border-radius: 10px;
-}
-
-/* تغییر ظاهر خود نوار اسکرول */
-.d-flex::-webkit-scrollbar-thumb {
-    background: linear-gradient(45deg, #6a11cb, #2575fc); /* رنگ نوار اسکرول به صورت گرادیانت */
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* سایه دور نوار اسکرول */
-}
-
-    /* تغییر رنگ هنگام hover */
-    .d-flex::-webkit-scrollbar-thumb:hover {
-        background: #555; /* رنگ نوار اسکرول هنگام حرکت ماوس روی آن */
-    }
-
-/* حرکت نرم اسکرول */
-.d-flex {
-    scroll-behavior: smooth;
-}
-/* طراحی کارت */
-.card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    overflow: hidden; /* جلوگیری از خارج شدن تصویر از کارت */
-    border-radius: 15px;
-    background-color: #fff;
-}
-
-    .card:hover {
-        transform: translateY(-10px); /* انیمیشن جابجایی کارت */
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* سایه نرم */
-    }
-
-/* استایل عنوان */
-.card-title {
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 10px;
-}
-
-/* قیمت */
-.price {
-    font-size: 1.1rem;
-    color: #4CAF50; /* سبز رنگ */
-}
-
-/* دکمه‌ها */
-.btn {
-    transition: background-color 0.3s ease, transform 0.3s ease;
-}
-
-    .btn:hover {
-        transform: scale(1.05); /* بزرگ شدن دکمه هنگام hover */
-    }
-
-.btn-primary {
-    background-color: #007bff;
-    border-color: #007bff;
-}
-
-    .btn-primary:hover {
-        background-color: #0056b3;
-        border-color: #004085;
-    }
-
-.btn-danger {
-    background-color: #dc3545;
-    border-color: #dc3545;
-}
-
-    .btn-danger:hover {
-        background-color: #c82333;
-        border-color: #bd2130;
-    }
-
-/* استایل تصویر */
-.card-img-top {
-    object-fit: cover;
-    height: 200px;
-    width: 100%;
-}
-
-/* جلوگیری از نمایش بیش از حد متن عنوان */
-.text-truncate {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
+.banner-top {
+    position: relative;
+    height: 200px; /* موبایل */
+    background: url('../images/banner/01.jpg') no-repeat center center/cover;
     overflow: hidden;
-    -webkit-line-clamp: 2; /* حداکثر دو خط برای عنوان */
 }
 
-/* استایل footer */
-.card-footer {
-    background-color: #f8f9fa;
-    border-top: 1px solid #ddd;
+@media (min-width: 768px) {
+    .banner-top {
+        height: 148px; /* دسکتاپ */
+    }
 }
-
-/* استایل سایز */
-.card-text {
-    font-size: 1rem;
-}
-.hover-shadow:hover {
-    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
-    transition: box-shadow 0.3s ease-in-out;
-}
-
-.cart-badge-animate {
-    transform: scale(1.3);
-    transition: transform 0.3s ease, background-color 0.3s ease;
-    background-color: #ffc107 !important;
-}
-
-.btn-circle {
-    width: 40px;
+.banner-middle {
     height: 40px;
-    border-radius: 50%;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.2s, box-shadow 0.2s;
-    font-size: 18px;
+    
 }
-
-    .btn-circle:hover {
-        transform: scale(1.2);
-        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    }
-
-.quantity-container {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.quantity-display {
-    width: 50px;
-    text-align: center;
+.click-word {
+    font-family: "IRANSansWeb" !important;
+    display: inline-block;
     font-weight: bold;
-    font-size: 16px;
+    font-size: clamp(1.2rem, 2vw, 1.5rem);
+    letter-spacing: .25rem; /* فاصله بین حروف */
+    animation: blinkStretch 1.5s ease-in-out infinite;
 }
 
-/* افکت لرزش کوتاه */
-@keyframes shake {
+/* انیمیشن: چشم‌زن + کشیدگی */
+@keyframes blinkStretch {
     0% {
-        transform: translateX(0);
-    }
-
-    20% {
-        transform: translateX(-5px);
+        transform: scaleX(1);
+        color: #fff;
     }
 
     40% {
-        transform: translateX(5px);
+        transform: scaleX(1.5);
+        color: #ffe082;
     }
-
+    /* کشیده‌تر + زرد */
     60% {
-        transform: translateX(-5px);
-    }
-
-    80% {
-        transform: translateX(5px);
+        transform: scaleX(1.4);
+        color: #fff176;
     }
 
     100% {
-        transform: translateX(0);
+        transform: scaleX(1);
+        color: #fff;
     }
 }
 
-.shake {
-    animation: shake 0.5s;
+/* دسترسی: اگه کاربر انیمیشن‌ها رو غیرفعال کرده */
+@media (prefers-reduced-motion: reduce) {
+    .click-word {
+        animation: none !important;
+        transform: none !important;
+        color: #fff !important;
+    }
 }
 
-@media (max-width: 767.98px) {
-    .form-control-md.d-md-block {
-        font-size: 1.2rem;
-        padding: 0.75rem 1rem;
+.swiper-slide {
+    display: flex;
+    justify-content: center;
+}
+.feature-card {
+    border-radius: 15px;
+    transition: transform 0.3s, box-shadow 0.3s;
+    color: #fff;
+}
+
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.2);
     }
 
-    .btn-md.d-md-block {
-        font-size: 1.2rem;
-        padding: 0.75rem 1rem;
-    }
+.feature-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+.card-delivery {
+    background: #0d6efd;
+}
+
+.card-quality {
+    background: #198754;
+}
+
+.card-support {
+    background: #ffc107;
+    color: #212529;
+}
+
+.highlight {
+    font-weight: bold;
 }

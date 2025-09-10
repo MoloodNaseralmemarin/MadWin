@@ -1,13 +1,51 @@
 ﻿@using MadWin.Core.DTOs.Products
 @model IList<ShowProductListItemViewModel>
-<div class="d-flex overflow-auto" style="gap: 1rem; scroll-behavior: smooth;">
-    @if (Model.Count > 0)
-    {
-        @foreach (var item in Model)
-        {
-            <div class="item-box" style="min-width: 220px;">
-                @await Html.PartialAsync("_ProductBox", item)
-            </div>
-        }
-    }
+
+<div id="productSplide" class="splide">
+    <div class="splide__track">
+        <ul class="splide__list">
+            @foreach (var product in Model)
+            {
+                <li class="splide__slide">
+                    <div class="card h-100 shadow-sm">
+                        <img src="@product.FileName" class="card-img-top" alt="@product.Title">
+                        <div class="card-body text-center">
+                            <h6 class="fw-bold">@product.Title</h6>
+                            <a href="@Url.Action("Buy", "Product", new { id = product.Id })" class="btn btn-sm btn-primary rounded-pill mt-2">خرید</a>
+                        </div>
+                    </div>
+                </li>
+            }
+        </ul>
+    </div>
+    <!-- دکمه‌های سفارشی آیکونی -->
+    <button class="splide__arrow splide__arrow--prev"><i class="fa-solid fa-chevron-left"></i></button>
+    <button class="splide__arrow splide__arrow--next"><i class="fa-solid fa-chevron-right"></i></button>
 </div>
+
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/splidejs/4.1.4/js/splide.min.js" integrity="sha512-4TcjHXQMLM7Y6eqfiasrsnRCc8D/unDeY1UGKGgfwyLUCTsHYMxF7/UHayjItKQKIoP6TTQ6AMamb9w2GMAvNg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            new Splide('#productSplide', {
+                type   : 'loop',
+                perPage: 1,
+                gap    : '1rem',
+                autoplay: true,
+                pauseOnHover: true,
+                pauseOnFocus: true,
+                pagination: false,
+                arrows: true,
+                drag: true,  // امکان swipe در موبایل
+                breakpoints: {
+                    576: { perPage: 1 },
+                    768: { perPage: 2 },
+                    992: { perPage: 3 },
+                    1200: { perPage: 4 },
+                },
+            }).mount();
+        });
+    </script>
+}

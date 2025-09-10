@@ -55,27 +55,33 @@ namespace MadWin.Infrastructure.Repositories
                  .FirstOrDefaultAsync(d => d.FactorId == factorId);
             return factorDetail;
         }
-
-        public async Task<FactorSummaryDto> GetFactorSummaryByFactorIdAsync(int factorId)
+        public async Task<FactorSummaryDto?> GetFactorSummaryByFactorIdAsync(int factorId)
         {
             var factor = await _context.Set<Factor>()
                 .Include(f => f.FactorDetails)
-                 .ThenInclude(f => f.Product)
-            .AsNoTracking()
+                    .ThenInclude(fd => fd.Product)
+                .AsNoTracking()
                 .Where(f => f.Id == factorId && !f.IsFinaly)
                 .Select(fs => new FactorSummaryDto
                 {
                     FactorId = fs.Id,
-                    FactorDetails = fs.FactorDetails,
-                    FactorSum = fs.FactorSum
+                    FactorDetails = fs.FactorDetails
+                        .Where(fd => !fd.IsDelete)   //  شرط روی جزئیات فاکتور
+                        .Select(fd => new FactorDetailDto
+                        {
+                            Id = fd.Id,
+                            ProductTitle = fd.Product.Title,
+                            Quantity = fd.Quantity,
+                            Price = fd.Price
+                        }).ToList(),
 
+                    Discount = fs.DisTotal,
+                    DeliveryPrice = fs.DeliveryMethodAmount
                 })
                 .FirstOrDefaultAsync();
-            if (factor == null)
-                return null;
+
             return factor;
         }
-
 
         public async Task<List<FactorDetail>> GetAllFactorDetailByFactorIdAsync(int factorId)
         {
@@ -85,6 +91,19 @@ namespace MadWin.Infrastructure.Repositories
                 .ThenInclude(od => od.User)
                 .Where(od => od.Factor.Id == factorId && od.Factor.IsFinaly)
                 .ToListAsync();
+        }
+
+        public async Task<FactorDetail?> GetFactorDetailByProductIdAsync(int factorId, int productId)
+        {
+            return await _context.FactorDetails
+                .FirstOrDefaultAsync(fd => fd.FactorId == factorId && fd.ProductId == productId && !fd.IsDelete);
+        }
+
+        public decimal GetSubtotalByFactorId(int factorId)
+        {
+            return _context.FactorDetails
+                .Where(fd => fd.FactorId == factorId && !fd.IsDelete)
+                .Sum(fd => (decimal?)fd.Price * fd.Quantity) ?? 0;
         }
     }
 }

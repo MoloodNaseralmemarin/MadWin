@@ -1,5 +1,7 @@
 ﻿using MadWin.Application.DTOs.Orders;
+using MadWin.Application.Repositories;
 using MadWin.Application.Services;
+using MadWin.Core.DTOs.Orders;
 using MadWin.Core.Interfaces;
 using MadWin.Core.Lookups.CommissionRates;
 using Microsoft.AspNetCore.Authorization;
@@ -7,37 +9,48 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Shop2City.Core.Services.Products;
 using Shop2City.Core.Services.UserPanel;
+using Shop2City.WebHost.ViewModels.Orders;
+using System.Security.Claims;
 
 
 namespace Shop2City.Web.Areas.UserPanel.Controllers
 {
-    [Area("UserPanel")]
     [Authorize]
-    public class HomeController : Controller
+    public class OrdersController : Controller
     {
+        private readonly IUserPanelService _userPanelService;
+        private readonly IUserService _userService;
         private readonly IProductService _productService;
         private readonly IOrderService _orderService;
         private readonly ICurtainComponentDetailService _curtainComponentDetailService;
+        private readonly IDeliveryMethodService _deliveryMethodService;
+        private readonly ILogger<OrdersController> _logger;
+        private readonly IDiscountService _disCountService;
         private readonly ICommissionRateRepository _commissionRateRepository;
-  
+
         private readonly ICurtainComponentRepository _curtainComponentRepository;
 
-        public HomeController(IProductService productService, IOrderService orderService, IOrderRepository orderRepository,
+        public OrdersController(IUserService userService, IUserPanelService userPanelService, IProductService productService, IOrderService orderService, IOrderRepository orderRepository,
             ICurtainComponentDetailService curtainComponentDetailService,
-            ICommissionRateRepository commissionRateRepository,
-            ICurtainComponentRepository curtainComponentRepository
+            IDeliveryMethodService deliveryMethodService,
+            ILogger<OrdersController> logger,
+            IDiscountService disCountService,
+            ICommissionRateRepository commissionRateRepository
            )
         {
+            _userService = userService;
+            _userPanelService = userPanelService;
             _productService = productService;
-            _orderService = orderService;
             _curtainComponentDetailService = curtainComponentDetailService;
-
-            _commissionRateRepository= commissionRateRepository;
-            _curtainComponentRepository= curtainComponentRepository;
+            _orderService = orderService;
+            _deliveryMethodService = deliveryMethodService;
+            _logger = logger;
+            _disCountService = disCountService;
+            _commissionRateRepository = commissionRateRepository;
 
 
         }
-        public IActionResult Index()
+        public IActionResult CreateOrder()
         {
             var category = _productService.GetCategoryForManageProduct(1);
             ViewData["Categories"] = new SelectList(category, "Value", "Text");
@@ -47,12 +60,13 @@ namespace Shop2City.Web.Areas.UserPanel.Controllers
             return View();
         }
 
+        #region محاسبات
+
+        #endregion
         [HttpPost]
-        public async Task<IActionResult> Index(CreateOrderInitialDto orderView)
+        public async Task<IActionResult> CreateOrder(CreateOrderInitialDto orderView)
         {
             int orderId = 0;
-            int height = 0;
-            int width = 0;
             #region بدست اوردن userId
             var UserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             if (!int.TryParse(UserId, out int userId))
@@ -60,10 +74,6 @@ namespace Shop2City.Web.Areas.UserPanel.Controllers
                 return Unauthorized(); // یا هر رفتار مناسب
             }
 
-            #endregion
-            #region ثبت در جدول سفارش ها و بدست آوردن orderId
-            // مرحله 2: ثبت سفارش (بدون مبلغ نهایی، اگر می‌خوای بعداً آپدیت کنی)
-            orderId = await _orderService.CreateOrderInitialAsync(orderView, userId, 0); // مقدار اولیه صفر
             #endregion
             #region اگر ارتفاع کمتر از 200 بود 200 محاسبه شود و عرض کمتر از 80 بود 80 محاسبه شود
 
@@ -83,12 +93,15 @@ namespace Shop2City.Web.Areas.UserPanel.Controllers
             if (items == null || !items.Any())
                 return View();
 
-
+            #region ثبت در جدول سفارش ها و بدست آوردن orderId
+            // مرحله 2: ثبت سفارش (بدون مبلغ نهایی، اگر می‌خوای بعداً آپدیت کنی)
+            orderId = await _orderService.CreateOrderInitialAsync(orderView, userId, 0); // مقدار اولیه صفر
+            #endregion
             // مرحله 3: محاسبه هر آیتم
             foreach (var item in items)
             {
-               
-       
+                try
+                {
                     Console.WriteLine($"Processing component: {item.CurtainComponentId}");
 
                     decimal componentCost = item.CurtainComponentId switch
@@ -96,7 +109,7 @@ namespace Shop2City.Web.Areas.UserPanel.Controllers
                         1 => await CalculateIraniAsync(orderView),
                         2 => await CalculateKharejiAsync(orderView),
                         3 => await CalculateTooriOneLayerAsync(orderView),
-                        4 => await CalculateTooriTwoLayerAsync(orderView,orderView.PartCount),
+                        4 => await CalculateTooriTwoLayerAsync(orderView, orderView.PartCount),
                         5 => await CalculateZipper5CostAsync(orderView.Width),
                         6 => await CalculateZipper2CostAsync(orderView.Width),
                         7 => await CalculateChodonCostAsync(orderView.Width),
@@ -114,11 +127,11 @@ namespace Shop2City.Web.Areas.UserPanel.Controllers
                     Console.WriteLine($"Saving component: {item.CurtainComponentId} with cost {componentCost}");
 
                     await _curtainComponentDetailService.CreateCurtainComponentDetailInitialAsync(orderId, item.CurtainComponentId, componentCost, orderView.Count);
-                //}
-                //catch (Exception ex)
-                //{
-                //    Console.WriteLine($"ERROR in component {item.CurtainComponentId}: {ex.Message}");
-                //}
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"ERROR in component {item.CurtainComponentId}: {ex.Message}");
+                }
             }
 
             #region به دست آوردن مبلغ کارمزد نسب به تعداد تکه و مساوی/نامساوی
@@ -127,15 +140,17 @@ namespace Shop2City.Web.Areas.UserPanel.Controllers
             #region ویرایش قیمت پایه + قیمت کارمزد + شناسه کارمزد
             await _orderService.UpdatePriceAndCommissionAsync(orderId, basePrice, commission.CommissionPercent, commission.CommissionRateId);
             #endregion
-                var category = _productService.GetCategoryForManageProduct(1);
-                ViewData["Categories"] = new SelectList(category, "Value", "Text");
+            var category = _productService.GetCategoryForManageProduct(1);
+            ViewData["Categories"] = new SelectList(category, "Value", "Text");
 
-                var subCategory = _productService.GetSubCategoryForManageProduct(int.Parse(category.First().Value));
-                ViewData["SubCategories"] = new SelectList(subCategory, "Value", "Text");
-             return RedirectToAction("GetOrderSummary", "Orders", new { area = "UserPanel", orderId = orderId });
+            var subCategory = _productService.GetSubCategoryForManageProduct(int.Parse(category.First().Value));
+            ViewData["SubCategories"] = new SelectList(subCategory, "Value", "Text");
+            var model = await _orderService.GetTodayOrdersAsync(1, 10);
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                return ViewComponent("OrderSummary");
+
+            return View();
         }
-        
-
         #region پرده طلقی ایرانی
         private async Task<decimal> CalculateIraniAsync(CreateOrderInitialDto order)
         {
@@ -170,7 +185,7 @@ namespace Shop2City.Web.Areas.UserPanel.Controllers
 
             // محاسبه هزینه لایه دوم (با ضخامت 40 و قیمت ID = 4)
             decimal unitPrice = await _curtainComponentRepository.GetPriceByIdAsync(4);
-                  if (unitPrice <= 0)
+            if (unitPrice <= 0)
                 return 0;
             decimal heightPlusMargin = order.Height + 10;
             decimal twoLayerArea = heightPlusMargin * 40;
@@ -228,8 +243,8 @@ namespace Shop2City.Web.Areas.UserPanel.Controllers
             var adjustedHeight = GetAdjustedHeight(height);
             //decimal a =adjustedHeight / 100;
             //decimal b = a *unitPrice;
-            decimal a =(decimal)adjustedHeight / 100;
-            decimal b =(decimal) a *unitPrice;
+            decimal a = (decimal)adjustedHeight / 100;
+            decimal b = (decimal)a * unitPrice;
             return b;
         }
         #endregion
@@ -250,12 +265,12 @@ namespace Shop2City.Web.Areas.UserPanel.Controllers
         }
         #endregion
         #region گان
-        private async Task<decimal> CalculateGanCostAsync(int height,int partCount)
+        private async Task<decimal> CalculateGanCostAsync(int height, int partCount)
         {
-            const decimal coefficient = 0.01M;     
-            const int extraHeight = 10;             
+            const decimal coefficient = 0.01M;
+            const int extraHeight = 10;
             const decimal widthFactor = 4.2M;  //وزن هر متر گان     
-            const int quantity = 4;                 
+            const int quantity = 4;
 
             var unitPrice = await _curtainComponentRepository.GetPriceByIdAsync(8);
 
@@ -266,7 +281,7 @@ namespace Shop2City.Web.Areas.UserPanel.Controllers
             decimal resultGan = adjustedHeight * coefficient * widthFactor * quantity * unitPrice;
 
             var newGan = resultGan / 2;
-        
+
 
             var isTriplePart = partCount == 3;
             decimal a = resultGan + newGan;
@@ -275,7 +290,7 @@ namespace Shop2City.Web.Areas.UserPanel.Controllers
 
         #endregion
         #region آهنربا
-        private async Task<decimal> CalculateMagnetCostAsync(int height,int partCount)
+        private async Task<decimal> CalculateMagnetCostAsync(int height, int partCount)
         {
             const decimal magnetSpacing = 13.5M;
             const int threshold1 = 200;
@@ -321,7 +336,7 @@ namespace Shop2City.Web.Areas.UserPanel.Controllers
 
             var unitPrice = await _curtainComponentRepository.GetPriceByIdAsync(10);
 
-            var adjustedwidth = width+ extraWidth;
+            var adjustedwidth = width + extraWidth;
             decimal resultGlue4 = adjustedwidth * coefficient * unitPrice;
 
             return resultGlue4;
@@ -392,6 +407,103 @@ namespace Shop2City.Web.Areas.UserPanel.Controllers
         private async Task<CommissionInfoLookup> GetCommissionInfoAsync(int partCount, bool isEqualParts)
         {
             return await _commissionRateRepository.GetCommissionInfoAsync(partCount, isEqualParts);
+        }
+        #endregion
+  
+          public async Task<IActionResult> GetOrderSummary(int orderId)
+        {
+            var orderSummary = await _orderService.GetOrderSummaryByOrderIdAsync(orderId);  // از پارامتر استفاده شد
+            var deliveryMethods = await _deliveryMethodService.GetDeliveryMethodInfoAsync();
+            if (orderSummary == null)
+                return NotFound();
+
+            var viewModel = new OrderSummaryViewModel
+            {
+                OrderSummary = orderSummary,
+                DeliveryMethods = deliveryMethods
+            };
+
+            return View(viewModel);
+        }
+        #region کد تخفیف
+        public async Task<IActionResult> UseDiscountAsync(int orderId, string discountCode)
+        {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!int.TryParse(userIdString, out int userId))
+                return Json(new { success = false, message = "کاربر نامعتبر" });
+
+            var result = await _disCountService.UseDiscountAsync(orderId, discountCode, userId);
+
+
+            switch (result)
+            {
+                case DiscountUseType.Success:
+
+                    var applyDiscount = await _disCountService.ApplyDiscountAsync(orderId, discountCode);
+
+                    return Json(new
+                    {
+                        success = true,
+                        discountAmount = applyDiscount.DiscountAmount,
+                        message = "کد تخفیف با موفقیت اعمال شد"
+                    });
+
+                case DiscountUseType.ExpirationDate:
+                    return Json(new
+                    {
+                        success = false,
+                        message = "مهلت استفاده از کد تخفیف به پایان رسیده است"
+                    });
+
+                case DiscountUseType.NotFound:
+                    return Json(new
+                    {
+                        success = false,
+                        message = "کد تخفیف یافت نشد"
+                    });
+
+                case DiscountUseType.Finished:
+                    return Json(new
+                    {
+                        success = false,
+                        message = "سقف استفاده از این کد تخفیف به پایان رسیده است"
+                    });
+
+                case DiscountUseType.UserUsed:
+                    return Json(new
+                    {
+                        success = false,
+                        message = "شما قبلاً از این کد تخفیف استفاده کرده‌اید"
+                    });
+
+                default:
+                    return Json(new
+                    {
+                        success = false,
+                        message = "خطای ناشناخته‌ای رخ داده است"
+                    });
+            }
+        }
+        #endregion
+
+        [Authorize]
+        public async Task<IActionResult> ShowOrderForUser()
+        {
+            #region بدست اوردن userId
+            var UserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!int.TryParse(UserId, out int userId))
+            {
+                return Unauthorized(); // یا هر رفتار مناسب
+            }
+            #endregion
+            var order = await _orderService.GetOrderSummaryByUserIdAsync(userId);
+            return View(order);
+        }
+        #region حذف از سفارش
+        public async Task<IActionResult> RemoveItemsByOrderAsync(int[] orderIds)
+        {
+            return null;
+            //await _orderService.SoftDeleteFromOrderAsync(orderIds);
         }
         #endregion
     }

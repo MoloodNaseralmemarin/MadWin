@@ -21,50 +21,36 @@ namespace MadWin.Application.Services
 
         public async Task<int> AddFactorAsync(int userId, int productId, int count)
         {
+            // پیدا کردن فاکتور باز کاربر (پرداخت نشده)
+            var factor = await _factorRepository.GetOpenFactorByUserIdAsync(userId);
 
-            //اول چک کنیم ببینیم سفارش باز داره یعنی پرداخت نهایی نکرده است
-            //اگر فاکتور باز داشت باید به اون فاکتور اضافه بشه
-            //اگر فاکتور باز داشت باید به اون فاکتور اضافه بشه
-
-            var isOpenFactor =await _factorRepository.IsExistOpenFactorAsync(userId,false);
-            var factor=await _factorRepository.GetFactorByUserIdAsync(userId);
-
-            //اگر سفارش خالی بود
-            if (!isOpenFactor)
+            if (factor == null)
             {
-             factor= await _factorRepository.AddFactorAsync(userId);
+                // اگر فاکتور باز نداشت → یک فاکتور جدید بساز
+                factor = await _factorRepository.AddFactorAsync(userId);
+            }
+
+            // بررسی کنیم آیا این محصول توی فاکتور باز هست یا نه
+            var factorDetail = await _factorDetailRepository.GetFactorDetailByProductIdAsync(factor.Id, productId);
+
+            if (factorDetail == null)
+            {
+                // اگر محصول وجود نداشت → رکورد جدید اضافه کن
                 await _factorDetailRepository.AddFactorDetailAsync(factor.Id, count, productId);
             }
             else
             {
-
-                //کاربر فاکتور باز داره
-                //الان باید چک کنیم از کالای انتخاب شده توی فاکتورش هست یا نه 
-
-                var isExistFactorDetail = await _factorDetailRepository.IsExistFactorDetailAsync(factor.Id);
-                var factorDetail = await _factorDetailRepository.GetFactorByfactorIdAsync(factor.Id);
-                // اگر همچنین کالایی وجود نداشت
-                if (isExistFactorDetail)
-                {
-                    factorDetail = await _factorDetailRepository.AddFactorDetailAsync(factor.Id, count, productId);
-
-                }
-                //اینجا محصول وجود نداشت توی فاکتور باز
-                else
-                {
-                    //یدونه به تعدادش اضافه کن
-                    factorDetail.Quantity += 1;
-                    _factorDetailRepository.Update(factorDetail);
-                    await _factorDetailRepository.SaveChangesAsync();
-                }
-  
-
+                // اگر محصول وجود داشت → فقط تعدادش رو زیاد کن
+                factorDetail.Quantity += count;
+                _factorDetailRepository.Update(factorDetail);
+                await _factorDetailRepository.SaveChangesAsync();
             }
 
-           await _factorRepository.UpdateFactorSum(factor.Id);
+            // آپدیت مجموع فاکتور
+            await _factorRepository.UpdateFactorSum(factor.Id);
+
             return factor.Id;
         }
-
 
         public async Task<Factor> GetFactorByFactorIdAsync(int factorId)
         {
@@ -74,7 +60,7 @@ namespace MadWin.Application.Services
         public async Task UpdateIsFinalyFactorAsync(Factor factor)
         {
             factor.IsFinaly = true;
-            factor.TotalAmount = factor.FactorSum + factor.DeliveryMethodAmount - factor.DisTotal;
+            factor.TotalAmount = factor.TotalPrice + factor.DeliveryMethodAmount - factor.DisTotal;
             _factorRepository.Update(factor);
             await _factorRepository.SaveChangesAsync();
         }
@@ -91,5 +77,43 @@ namespace MadWin.Application.Services
                 throw;
             }
         }
+
+
+        public async Task<int> CreateOrGetOpenFactorAsync(int userId)
+        {
+            var factor = await _factorRepository.GetOpenFactorByUserIdAsync(userId);
+            if (factor == null)
+            {
+                factor = await _factorRepository.AddFactorAsync(userId);
+            }
+            return factor.Id;
+        }
+
+        public async Task AddOrUpdateFactorDetailAsync(int factorId, int productId, int count)
+        {
+            var factorDetail = await _factorDetailRepository.GetFactorDetailByProductIdAsync(factorId, productId);
+
+            if (factorDetail == null)
+            {
+                await _factorDetailRepository.AddFactorDetailAsync(factorId, count, productId);
+            }
+            else
+            {
+                factorDetail.Quantity += count;
+                _factorDetailRepository.Update(factorDetail);
+                await _factorDetailRepository.SaveChangesAsync();
+            }
+        }
+
+        public async Task UpdateFactorSumAsync(int factorId)
+        {
+            await _factorRepository.UpdateFactorSum(factorId);
+        }
+
+        public decimal GetSubtotal(int factorId)
+        {
+            return _factorDetailRepository.GetSubtotalByFactorId(factorId);
+        }
+
     }
 }

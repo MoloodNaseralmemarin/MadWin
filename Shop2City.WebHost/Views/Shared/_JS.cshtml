@@ -2,13 +2,7 @@
 <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-
-toastr.options = {
-    "closeButton": true,
-    "progressBar": true,
-    "positionClass": "toast-top-right", // محل نمایش
-    "timeOut": "3000"
-};
+<script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
 
 <!--Start AddToCart-->
 <script type="text/javascript">
@@ -35,32 +29,30 @@ toastr.options = {
         $("#Cart-total").text(response.totalCount);
         $("#Price-total").text(response.totalPrice.toLocaleString());
         location.reload(); // یا بعداً با Ajax فقط ردیف رو آپدیت می‌کنیم
+        return false;
     }
 
     function increaseCart(productId) {
         $.post('/Cart/Increase', { productId: productId }, function (response) {
             updateCartUI(response);
+            return false;
         });
     }
 
     function decreaseCart(productId) {
         $.post('/Cart/Decrease', { productId: productId }, function (response) {
             updateCartUI(response);
+             return false;
         });
     }
 
     function removeCart(productId) {
         $.post('/Cart/Remove', { productId: productId }, function (response) {
             updateCartUI(response);
+             return false;
         });
     }
-
-
-
 </script>
-
-
-
 <!--Login-->
 <script type="text/javascript">
     $(function() {
@@ -91,6 +83,144 @@ toastr.options = {
         };
     });
 </script>
+<!--Factors-->
+<script>
+    function parseNumber(text) {
+        return Number(text.replace(/[^\d]/g, '')) || 0;
+    }
+
+    function updateTotal() {
+        const subtotal = parseNumber($("#SubtotalPrice").text());
+        const delivery = parseNumber($("#deliveryPrice").text());
+        const discount = parseNumber($("#disTotal").text());
+
+        const total = subtotal - discount + delivery;
+        $("#totalPrice").text(total.toLocaleString());
+    }
+
+    $(function () {
+        // بارگذاری اولیه
+        updateTotal();
+
+        // تغییر روش ارسال
+        $("input[name=selection]").on("change", function () {
+            $.get("/Home/GetDeliveryPrice", { deliveryId: $(this).val() })
+                .done(function (result) {
+                    if (result.success) {
+                        $("#deliveryPrice").text(result.price.toLocaleString());
+                        updateTotal();
+                    }
+                });
+        });
+
+        // اعمال کد تخفیف
+        $("#applyDiscountBtn").on("click", function (e) {
+            e.preventDefault();
+
+                $.get('/Factors/UseDiscountForFactor', {
+        factorId: $("#factorId").val(),
+        discountCode: $("#discountCode").val()
+    })
+            .done(function (response) {
+                if (response.success) {
+                    $("#disTotal").text(response.discountAmount.toLocaleString());
+                    updateTotal();
+                    toastr.success(response.message);
+                } else {
+                    toastr.error(response.message);
+                }
+            })
+            .fail(function () {
+                toastr.error("خطا در ارتباط با سرور");
+            });
+        });
+    });
+</script>
+
+<!--حذف از فاکتور-->
+<script>
+    function removeItems(factorId) {
+         console.log("1",factorId);
+        var selectedIds = [];
+        $(".delete-checkbox:checked").each(function () {
+            selectedIds.push($(this).val());
+        });
+
+         if (selectedIds.length === 0) {
+        toastr.warning('هیچ موردی انتخاب نشده است.');
+    $.getJSON("/Factors/GetSubtotalPrice", { factorId: factorId }, function (data) {
+        if (data && data.price !== undefined) {
+            $("#SubtotalPrice").text(data.price);
+        } else {
+            console.error("قیمت برنگشت یا null بود!");
+        }
+    });
+        return;
+    }
+
+        $.ajax({
+            url: '/Factors/RemoveItemsByFactor',
+            type: 'POST',
+            data: { factorDetailIds: selectedIds },
+            traditional: true,
+            success: function(response) {
+                if (response.success) {
+                    // حذف ردیف‌های انتخاب شده از جدول
+                    $(".delete-checkbox:checked").closest("tr").remove();
+                    toastr.success('حذف با موفقیت انجام شد.');
+          $.getJSON("/Factors/GetSubtotalPrice", { factorId: factorId }, function (data) {
+        if (data && data.price !== undefined) {
+            $("#SubtotalPrice").text(data.price);
+            updateTotal();
+        } else {
+            console.error("قیمت برنگشت یا null بود!");
+        }
+    });
+                } else {
+                    toastr.error('خطا در حذف.');
+                }
+            },
+            error: function() {
+                toastr.error('مشکل در ارتباط با سرور.');
+            }
+        });
+    }
+</script>
+
+<!--پرداخت فاکتور-->
+<script>
+    $("#postButton").on("click", function () {
+        const sumOrder = parseFloat($("#sumOrder").text().replace(/,/g, "")) || 0;
+        const invoiceId=("#factorId").text;
+        var selectedDeliveryId = $(this).attr('id');
+        const dataToSend = {
+            sumOrder,
+            invoiceId: invoiceId,
+            deliveryId: selectedDeliveryId,
+            source: "factor"
+        };
+
+        $.ajax({
+            url: "/Payment/ProcessPayment",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(dataToSend),
+            success: function (response) {
+                if (response.success && response.redirectUrl) {
+                    window.location.href = response.redirectUrl;
+                } else {
+                    toastr.error("پرداخت ناموفق بود")
+                }
+            },
+            error: function (xhr, status, error) {
+                 toastr.error("مشکلی در ارتباط با سرور پیش آمد")
+            }
+        });
+    });
+</script>
+
+
+
 
 
 

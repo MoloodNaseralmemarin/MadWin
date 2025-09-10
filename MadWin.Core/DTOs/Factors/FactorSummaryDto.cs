@@ -5,34 +5,33 @@ namespace MadWin.Core.DTOs.Factors
 {
     public class FactorSummaryDto
     {
-
         public int FactorId { get; set; }
-        public string ProductTitle { get; set; }
 
-        /// <summary>
-        /// تعداد سفارش داده شده
-        /// </summary>
-        public int Count { get; set; }
+        // لیست جزئیات (هر محصول)
+        public List<FactorDetailDto> FactorDetails { get; set; } = new();
 
-        /// <summary>
-        ///قیمت پایه
-        /// </summary>
-        [Display(Name = "قیمت پایه")]
-        public decimal BasePrice { get; set; }
+        // جمع کل قبل از تخفیف
+        public decimal SubTotal => FactorDetails.Sum(d => d.TotalPrice);
 
-        /// <summary>
-        /// قیمت کل محصولات
-        /// </summary>
-        public decimal FactorSum { get; set; }
+        // مبلغ تخفیف (فعلاً صفر، بعداً با کد تخفیف پر میشه)
+        public decimal Discount { get; set; } = 0;
 
-        /// <summary>
-        /// جمع کل + تعداد
-        /// </summary>
-        public decimal SubtotalPrice => BasePrice * Count;
+        // هزینه ارسال (بعداً براساس روش ارسال محاسبه میشه)
+        public decimal DeliveryPrice { get; set; } = 0;
 
-        public decimal TotalCost => SubtotalPrice;
-        public bool IsFinaly { get; set; }
-
-        public List<FactorDetail> FactorDetails { get; set; }
+        // مبلغ قابل پرداخت = جمع کل - تخفیف + ارسال
+        public decimal FinalTotal => SubTotal - Discount + DeliveryPrice;
     }
+
+
+    public class FactorDetailDto
+    {
+        public int Id { get; set; }
+        public string ProductTitle { get; set; } = "";
+        public int Quantity { get; set; }
+        public decimal Price { get; set; }
+
+        public decimal TotalPrice => Price * Quantity;
+    }
+
 }

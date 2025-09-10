@@ -1,7 +1,7 @@
 ﻿<a asp-controller="Cart" asp-action="ShowCart"
-   class="text-white badge bg-warning text-dark p-2 position-relative" id="cartBadge">
+   class="text-white badge bg-warning text-dark p-2 me-5 position-relative" id="cartBadge">
     <i class="fa fa-shopping-cart"></i>
-    <span id="Cart-total">@Model.TotalCount</span> کالا -
-    <span id="Price-total">@Model.TotalPrice.ToString("#,0")</span> ریال
+    <span class="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-danger">
+        <span id="Cart-total">@Model.TotalCount</span>
+    </span>
 </a>
-

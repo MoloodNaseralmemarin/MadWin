@@ -13,5 +13,8 @@ namespace MadWin.Application.Services
         Task<FactorSummaryDto> GetFactorSummaryByFactorIdAsync(int factorId);
 
         Task<List<FactorDetail>> GetAllFactorDetailByFactorIdAsync(int factorId);
+
+        Task SoftDeleteAsync(IEnumerable<int> factorDetailIds);
+
     }
 }

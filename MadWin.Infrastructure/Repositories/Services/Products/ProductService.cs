@@ -333,7 +333,7 @@ namespace Shop2City.Core.Services.Products
                 {
                     Id = p.Id,
                     Title = p.Title,
-                    FileName = p.ProductGalleries!.OrderByDescending(pi => pi.ProductGalleryId).Last().FileName,
+                    FileName =p.ProductGalleries!.OrderByDescending(pi => pi.ProductGalleryId).Last().FileName,
                     Price=p.Price,
                     IsStatus = p.IsStatus,
                 })

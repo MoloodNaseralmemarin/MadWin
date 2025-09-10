@@ -103,8 +103,8 @@ namespace Shop2City.WebHost.Controllers
                     _logger.LogWarning("ModelState is invalid during login for {User}", model.userName);
                     return View(model);
                 }
-                try
-                {
+               // try
+                //{
                     var result = await _userService.LoginAsync(new LoginResultDto
                     {
                         UserName = model.userName,
@@ -140,13 +140,13 @@ namespace Shop2City.WebHost.Controllers
 
                     ModelState.AddModelError("", "نام کاربری یا رمز عبور نادرست است.");
                     return View(model);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Login error for {User}", model.userName);
-                    ModelState.AddModelError("", "خطایی در ورود رخ داد.");
-                    return View(model);
-                }
+            //    }
+                //catch (Exception ex)
+                //{
+                //    _logger.LogError(ex, "Login error for {User}", model.userName);
+                //    ModelState.AddModelError("", "خطایی در ورود رخ داد.");
+                //    return View(model);
+                //}
             }
         #endregion
         #region ForgotPassword

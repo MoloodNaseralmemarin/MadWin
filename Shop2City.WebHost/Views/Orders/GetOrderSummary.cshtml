@@ -26,6 +26,7 @@
             <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
+                        <th><input type="checkbox" id="selectAll" /></th>
                         <th>نام محصول</th>
                         <th>ابعاد (ارتفاع × عرض)</th>
                         <th>تعداد قطعات</th>
@@ -37,9 +38,11 @@
                 </thead>
                 <tbody>
                     <tr>
+                        
                         <td>@Model.OrderSummary.CategoryGroup</td>
                         <td>@Model.OrderSummary.Size</td>
                         <td>@Model.OrderSummary.PartCount</td>
+                        <td>fsdfds</td>
                         <td>@(Model.OrderSummary.IsEqualParts ? "قطعات مساوی هستند" : "قطعات اندازه‌های مختلف دارند")</td>
                         <td>@Model.OrderSummary.PriceWithFee.ToString("N0") ریال</td>
                         <td>@Model.OrderSummary.Count</td>

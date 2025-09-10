@@ -1,4 +1,5 @@
 ﻿using MadWin.Core.Entities.Common;
+using System.Linq.Expressions;
 
 namespace MadWin.Core.Interfaces
 {
@@ -10,8 +11,11 @@ namespace MadWin.Core.Interfaces
         void Remove(T entity);
         void Update(T entity);
         Task SaveChangesAsync();
-
         IQueryable<T> GetQuery();
+
+        Task<List<T>> GetByIdsAsync(IEnumerable<int> ids);
+        Task<List<T>> GetByConditionAsync(Expression<Func<T, bool>> predicate);
+        void UpdateRange(IEnumerable<T> entities);
 
     }
 }

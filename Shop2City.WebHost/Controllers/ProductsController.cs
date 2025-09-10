@@ -1,10 +1,9 @@
-﻿using MadWin.Application.Services;
+﻿using MadWin.Application.DTOs.Cart;
+using MadWin.Application.Services;
 using MadWin.Infrastructure.Context;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
 using Shop2City.Core.Services.Products;
-using Shop2City.WebHost.ViewModels.Cart;
 using System.Security.Claims;
 
 
@@ -15,15 +14,14 @@ namespace Shop2City.WebHost.Controllers
         private readonly IProductService _productService;
         private readonly IFactorService _factorService;
         private readonly IUserService _userService;
-        private readonly MadWinDBContext _context;
+        private readonly IServiceProvider _serviceProvider;
 
-
-        public ProductsController(IProductService productService, IFactorService factorService, IUserService userService, MadWinDBContext context)
+        public ProductsController(IProductService productService, IFactorService factorService, IUserService userService, IServiceProvider serviceProvider)
         {
             _productService = productService;
             _factorService = factorService;
             _userService = userService;
-            _context = context;
+            _serviceProvider = serviceProvider;
         }
         public IActionResult Index(int pageId = 1, string filterProductTitleFa = ""
            , List<int> selectedGroups = null)
@@ -39,20 +37,41 @@ namespace Shop2City.WebHost.Controllers
         [Authorize]
         public async Task<IActionResult> BuyProduct()
         {
-            int factorId = 0;
-            //var UserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            //if (!int.TryParse(UserId, out int userId))
-            //{
-            //    return Unauthorized(); // یا هر رفتار مناسب
-            //}
+            // دریافت UserId از claims
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!int.TryParse(userIdClaim, out int userId))
+            {
+                return Unauthorized(); // اگر کاربر لاگین نکرده باشد
+            }
 
-            //var cart = HttpContext.Session.GetJson<List<ShopCartitemViewModel>>("Cart") ?? new List<ShopCartitemViewModel>();
-            //foreach (var item in cart)
-            //{
+            // دریافت سبد خرید از session
+            var cart = HttpContext.Session.GetObjectFromJson<List<ShopCartitemDto>>("Cart") ?? new List<ShopCartitemDto>();
 
-            //    factorId = await _factorService.AddFactorAsync(int.Parse(UserId), item.ProductId, item.Count);
-            //}
-            return RedirectToAction("GetFactorSummary", "Factors", new { area = "UserPanel", factorId = factorId });
+            // اگر سبد خرید خالی باشد
+            if (!cart.Any())
+            {
+                return RedirectToAction("Index", "Home"); // کاربر را به صفحه اصلی هدایت کن
+            }
+
+            using (var scope = _serviceProvider.CreateScope())
+            {
+                var factorService = scope.ServiceProvider.GetRequiredService<IFactorService>();
+
+                // فقط یکبار فاکتور رو بساز یا بیار
+                var factorId = await factorService.CreateOrGetOpenFactorAsync(userId);
+
+                // حالا همه‌ی آیتم‌ها رو اضافه کن
+                foreach (var item in cart)
+                {
+                    await factorService.AddOrUpdateFactorDetailAsync(factorId, item.ProductId, item.Count);
+                }
+
+                // آپدیت مجموع فاکتور
+                await factorService.UpdateFactorSumAsync(factorId);
+
+                // هدایت به صفحه خلاصه فاکتور
+                return RedirectToAction("GetFactorSummary", "Factors", new { factorId });
+            }
         }
     }
 }

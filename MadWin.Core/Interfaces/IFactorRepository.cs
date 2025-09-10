@@ -14,5 +14,7 @@ namespace MadWin.Core.Interfaces
         Task<FactorInfoLookup> GetFactorInfoByFactorIdAsync(int factorId);
 
         Task UpdatePriceAndDeliveryAsync(int deliveryId, int factorId);
+
+        Task<Factor?> GetOpenFactorByUserIdAsync(int userId);
     }
 }
